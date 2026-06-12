@@ -64,21 +64,7 @@ export function DashboardClient({ initialSuggestions, allTimeCounts }: Dashboard
           })
         }
 
-        if (result.notion_page_url) {
-          const notionUrl = result.notion_page_url
-          toast.success('✓ Notion-Seite erstellt', {
-            action: {
-              label: 'In Notion öffnen ↗',
-              onClick: () => window.open(notionUrl, '_blank', 'noopener,noreferrer'),
-            },
-            duration: 8000,
-          })
-          if (result.elaboration_warning) {
-            toast.info(result.elaboration_warning, { duration: 6000 })
-          }
-        } else if (result.notion_warning) {
-          toast.warning(result.notion_warning, { duration: 6000 })
-        }
+        toast.info('Notion-Dokument wird im Hintergrund erstellt…', { duration: 5000 })
       }
     },
     []

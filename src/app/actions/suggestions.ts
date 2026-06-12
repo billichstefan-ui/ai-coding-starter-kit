@@ -1,7 +1,8 @@
 'use server'
 
+import { after } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase-server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase-server'
 import {
   fetchBoard,
   createNoraBizDevBoard,
@@ -124,55 +125,7 @@ export async function updateSuggestionStatus(
         suggestion.source as string | null
       )
 
-      // Notion best-effort — failure must not block approval
-      let notion_page_url: string | undefined
-      let notion_warning: string | undefined
-      let elaboration_warning: string | undefined
-
-      const notionApiKey = process.env.NOTION_API_KEY
-      const notionParentPageId = process.env.NOTION_PARENT_PAGE_ID
-
-      if (!notionApiKey) {
-        notion_warning = 'Monday-Task erstellt — Notion nicht konfiguriert.'
-      } else if (!notionParentPageId) {
-        notion_warning = 'Monday-Task erstellt — Notion Parent-Page nicht konfiguriert.'
-      } else {
-        try {
-          const { databaseId } = await getOrCreateNotionDatabase(supabase, notionApiKey, notionParentPageId)
-
-          // PROJ-8: Elaborate document with Claude (best-effort — falls back to short text on failure)
-          let elaboratedSections: ElaboratedSection[] | undefined
-          try {
-            const elaboration = await elaborateDocument({
-              title: suggestion.title as string,
-              body: suggestion.body as string,
-              insight: suggestion.insight as string | null,
-              source: suggestion.source as string | null,
-              category: suggestion.category as string,
-            })
-            elaboratedSections = elaboration.sections
-          } catch {
-            elaboration_warning = 'Notion-Seite mit Kurztext erstellt — Voll-Ausarbeitung fehlgeschlagen.'
-          }
-
-          const page = await createPage(notionApiKey, databaseId, {
-            title: suggestion.title as string,
-            category: suggestion.category as string,
-            mondayUrl: item.url ?? null,
-            body: suggestion.body as string,
-            insight: suggestion.insight as string | null,
-            source: suggestion.source as string | null,
-            elaboratedSections,
-          })
-          notion_page_url = page.url
-        } catch (err) {
-          notion_warning = err instanceof Error
-            ? err.message
-            : 'Monday-Task erstellt — Notion nicht erreichbar.'
-        }
-      }
-
-      // Persist approval in Supabase
+      // Persist approval immediately so UI can return fast
       const { error: updateError } = await supabase
         .from('suggestions')
         .update({ status: 'approved', reviewed_at: new Date().toISOString() })
@@ -182,7 +135,43 @@ export async function updateSuggestionStatus(
         return { success: false, error: updateError.message }
       }
 
-      return { success: true, monday_task_url: item.url, notion_page_url, notion_warning, elaboration_warning }
+      // Notion elaboration runs after response is sent — user doesn't wait
+      const notionApiKey = process.env.NOTION_API_KEY
+      const notionParentPageId = process.env.NOTION_PARENT_PAGE_ID
+
+      if (notionApiKey && notionParentPageId) {
+        const suggestionSnapshot = {
+          title: suggestion.title as string,
+          body: suggestion.body as string,
+          insight: suggestion.insight as string | null,
+          source: suggestion.source as string | null,
+          category: suggestion.category as string,
+          mondayUrl: item.url ?? null,
+        }
+        after(async () => {
+          try {
+            const bgSupabase = createServiceRoleClient()
+            const { databaseId } = await getOrCreateNotionDatabase(bgSupabase, notionApiKey, notionParentPageId)
+
+            let elaboratedSections: ElaboratedSection[] | undefined
+            try {
+              const elaboration = await elaborateDocument(suggestionSnapshot)
+              elaboratedSections = elaboration.sections
+            } catch {
+              // Falls back to short text
+            }
+
+            await createPage(notionApiKey, databaseId, {
+              ...suggestionSnapshot,
+              elaboratedSections,
+            })
+          } catch {
+            // Background task — errors are silent
+          }
+        })
+      }
+
+      return { success: true, monday_task_url: item.url }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Monday.com nicht erreichbar — bitte erneut versuchen.'
       return { success: false, error: message }
