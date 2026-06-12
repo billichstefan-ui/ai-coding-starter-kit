@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { generateSuggestions } from '@/lib/anthropic'
 import { fetchLiveContext } from '@/lib/live-context'
+import { sendDailyDigest } from '@/lib/email'
 
 // Generierung kann mehrere Sekunden dauern (Claude + Retries + Notion-Fetches).
 export const maxDuration = 60
@@ -92,6 +93,13 @@ async function handleGenerate(request: NextRequest) {
       },
       { onConflict: 'report_date' }
     )
+
+    // 5. E-Mail-Digest — best-effort, blockiert nie den Erfolg
+    try {
+      await sendDailyDigest(rows.length)
+    } catch {
+      // still — Mail-Fehler darf Generierung nicht rückgängig machen
+    }
 
     return NextResponse.json({ success: true, count: rows.length })
   } catch (error) {

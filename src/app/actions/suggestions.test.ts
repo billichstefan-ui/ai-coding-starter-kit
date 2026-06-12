@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+// after() is fire-and-forget — store the callback so tests can await it explicitly
+const capturedAfter = vi.hoisted(() => ({ fn: null as (() => Promise<void>) | null }))
+
+vi.mock('next/server', () => ({
+  after: vi.fn((fn: () => Promise<void>) => { capturedAfter.fn = fn }),
+}))
+
 const mockGetUser = vi.hoisted(() => vi.fn())
 const mockEq = vi.hoisted(() => vi.fn())
 const mockUpdate = vi.hoisted(() => vi.fn())
@@ -14,6 +21,9 @@ vi.mock('@/lib/supabase-server', () => ({
     auth: { getUser: mockGetUser },
     from: mockFrom,
   }),
+  createServiceRoleClient: vi.fn(() => ({
+    from: mockFrom,
+  })),
 }))
 
 vi.mock('@/lib/monday', () => ({
@@ -82,6 +92,7 @@ function setupFromMock(forApproval = false) {
 describe('updateSuggestionStatus', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    capturedAfter.fn = null
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-123' } } })
     setupFromMock()
   })
@@ -147,7 +158,7 @@ describe('updateSuggestionStatus', () => {
       expect(result.monday_task_url).toBe('https://monday.com/boards/1/pulses/123')
     })
 
-    it('gibt notion_page_url zurück wenn Notion erfolgreich war', async () => {
+    it('gibt success + monday_task_url zurück (Notion läuft im Hintergrund)', async () => {
       process.env.MONDAY_API_KEY = 'test-key'
       process.env.NOTION_API_KEY = 'notion-test-key'
       process.env.NOTION_PARENT_PAGE_ID = 'parent-page-123'
@@ -156,11 +167,12 @@ describe('updateSuggestionStatus', () => {
 
       const result = await updateSuggestionStatus(VALID_UUID, 'approved')
       expect(result.success).toBe(true)
-      expect(result.notion_page_url).toBe('https://www.notion.so/Test-page-123')
-      expect(result.notion_warning).toBeUndefined()
+      expect(result.monday_task_url).toBe('https://monday.com/boards/1/pulses/123')
+      // notion_page_url nicht mehr synchron zurückgegeben — läuft via after()
+      expect(result.notion_page_url).toBeUndefined()
     })
 
-    it('setzt notion_warning wenn NOTION_API_KEY fehlt — Vorschlag trotzdem approved', async () => {
+    it('überspringt Notion still wenn NOTION_API_KEY fehlt — Vorschlag trotzdem approved', async () => {
       process.env.MONDAY_API_KEY = 'test-key'
       delete process.env.NOTION_API_KEY
       delete process.env.NOTION_PARENT_PAGE_ID
@@ -169,11 +181,12 @@ describe('updateSuggestionStatus', () => {
 
       const result = await updateSuggestionStatus(VALID_UUID, 'approved')
       expect(result.success).toBe(true)
-      expect(result.notion_warning).toContain('Notion nicht konfiguriert')
+      // Notion läuft via after() — kein notion_warning mehr synchron
+      expect(result.notion_warning).toBeUndefined()
       expect(result.notion_page_url).toBeUndefined()
     })
 
-    it('setzt notion_warning wenn NOTION_PARENT_PAGE_ID fehlt', async () => {
+    it('überspringt Notion still wenn NOTION_PARENT_PAGE_ID fehlt — Vorschlag trotzdem approved', async () => {
       process.env.MONDAY_API_KEY = 'test-key'
       process.env.NOTION_API_KEY = 'notion-test-key'
       delete process.env.NOTION_PARENT_PAGE_ID
@@ -182,21 +195,21 @@ describe('updateSuggestionStatus', () => {
 
       const result = await updateSuggestionStatus(VALID_UUID, 'approved')
       expect(result.success).toBe(true)
-      expect(result.notion_warning).toContain('Parent-Page nicht konfiguriert')
+      expect(result.notion_warning).toBeUndefined()
     })
 
-    it('setzt notion_warning wenn Notion-API wirft — Vorschlag trotzdem approved', async () => {
+    it('gibt success zurück auch wenn Notion-API wirft (stiller Hintergrund-Fehler)', async () => {
       process.env.MONDAY_API_KEY = 'test-key'
       process.env.NOTION_API_KEY = 'notion-test-key'
       process.env.NOTION_PARENT_PAGE_ID = 'parent-page-123'
       const { fetchBoard } = await import('@/lib/monday')
       vi.mocked(fetchBoard).mockResolvedValue({ id: 'board-123', groups: [{ id: 'g1', title: 'Marketing' }] })
       const { createPage } = await import('@/lib/notion')
-      vi.mocked(createPage).mockRejectedValue(new Error('Monday-Task erstellt — Notion kurz überlastet.'))
+      vi.mocked(createPage).mockRejectedValue(new Error('Notion kurz überlastet.'))
 
       const result = await updateSuggestionStatus(VALID_UUID, 'approved')
       expect(result.success).toBe(true)
-      expect(result.notion_warning).toContain('überlastet')
+      expect(result.notion_warning).toBeUndefined()
       expect(mockUpdate).toHaveBeenCalled()
     })
 
@@ -217,6 +230,8 @@ describe('updateSuggestionStatus', () => {
         vi.mocked(createPage).mockResolvedValue({ id: 'page-123', url: 'https://www.notion.so/Test-page-123' })
 
         await updateSuggestionStatus(VALID_UUID, 'approved')
+        // Await the after() background callback manually
+        if (capturedAfter.fn) await capturedAfter.fn()
         expect(elaborateDocument).toHaveBeenCalledWith(expect.objectContaining({
           title: MOCK_SUGGESTION.title,
           category: MOCK_SUGGESTION.category,
@@ -228,7 +243,7 @@ describe('updateSuggestionStatus', () => {
         )
       })
 
-      it('setzt elaboration_warning wenn elaborateDocument wirft — Notion-Seite wird trotzdem erstellt', async () => {
+      it('erstellt Notion-Seite ohne elaboratedSections wenn elaborateDocument wirft', async () => {
         const { fetchBoard } = await import('@/lib/monday')
         vi.mocked(fetchBoard).mockResolvedValue({ id: 'board-123', groups: [{ id: 'g1', title: 'Marketing' }] })
         const { elaborateDocument } = await import('@/lib/anthropic')
@@ -238,9 +253,9 @@ describe('updateSuggestionStatus', () => {
 
         const result = await updateSuggestionStatus(VALID_UUID, 'approved')
         expect(result.success).toBe(true)
-        expect(result.notion_page_url).toBe('https://www.notion.so/Test-page-123')
-        expect(result.elaboration_warning).toContain('Voll-Ausarbeitung fehlgeschlagen')
-        // createPage wird trotzdem aufgerufen — ohne elaboratedSections (Fallback)
+        expect(result.elaboration_warning).toBeUndefined()
+        // Await the after() background callback manually — createPage trotzdem aufgerufen
+        if (capturedAfter.fn) await capturedAfter.fn()
         expect(createPage).toHaveBeenCalledWith(
           expect.any(String),
           expect.any(String),
@@ -248,7 +263,7 @@ describe('updateSuggestionStatus', () => {
         )
       })
 
-      it('hat kein elaboration_warning bei erfolgreicher Ausarbeitung', async () => {
+      it('gibt success zurück nach Ausarbeitung — kein elaboration_warning', async () => {
         const { fetchBoard } = await import('@/lib/monday')
         vi.mocked(fetchBoard).mockResolvedValue({ id: 'board-123', groups: [{ id: 'g1', title: 'Marketing' }] })
         const { elaborateDocument } = await import('@/lib/anthropic')

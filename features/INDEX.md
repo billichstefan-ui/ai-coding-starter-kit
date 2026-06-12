@@ -23,7 +23,7 @@
 | PROJ-6 | Implementation Tracking & History | Deployed | [Spec](PROJ-6-implementation-tracking-history.md) | 2026-06-05 |
 | PROJ-7 | Context-Aware Suggestions (Live-Daten) | Deployed | [Spec](PROJ-7-context-aware-suggestions.md) | 2026-06-05 |
 | PROJ-8 | Notion-Dokument-Ausarbeitung | Deployed | [Spec](PROJ-8-notion-document-elaboration.md) | 2026-06-07 |
-| PROJ-9 | Daily Email-Digest | Architected | [Spec](PROJ-9-daily-email-digest.md) | 2026-06-12 |
+| PROJ-9 | Daily Email-Digest | In Progress | [Spec](PROJ-9-daily-email-digest.md) | 2026-06-12 |
 
 <!-- Add features above this line -->
 

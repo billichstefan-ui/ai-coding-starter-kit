@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server'
 const mockGetUser = vi.hoisted(() => vi.fn())
 const mockGenerate = vi.hoisted(() => vi.fn())
 const mockFetchLiveContext = vi.hoisted(() => vi.fn())
+const mockSendDailyDigest = vi.hoisted(() => vi.fn())
 const dbConfig = vi.hoisted(() => ({ value: {} as Record<string, unknown> }))
 
 vi.mock('@/lib/supabase-server', () => ({
@@ -19,6 +20,10 @@ vi.mock('@/lib/anthropic', () => ({
 
 vi.mock('@/lib/live-context', () => ({
   fetchLiveContext: mockFetchLiveContext,
+}))
+
+vi.mock('@/lib/email', () => ({
+  sendDailyDigest: mockSendDailyDigest,
 }))
 
 // Chainbarer Supabase-Mock: liefert konfigurierte Ergebnisse je Tabelle/Operation.
@@ -69,6 +74,7 @@ describe('POST /api/generate-suggestions', () => {
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } })
     mockGenerate.mockResolvedValue(SAMPLE)
     mockFetchLiveContext.mockResolvedValue(MOCK_LIVE_CONTEXT)
+    mockSendDailyDigest.mockResolvedValue(undefined)
     delete process.env.CRON_SECRET
   })
 
@@ -129,5 +135,21 @@ describe('POST /api/generate-suggestions', () => {
     dbConfig.value = { 'suggestions.insert': { error: { message: 'insert kaputt' } } }
     const res = await POST(makeReq())
     expect(res.status).toBe(500)
+  })
+
+  it('ruft sendDailyDigest mit der Anzahl der Vorschläge auf', async () => {
+    const res = await POST(makeReq())
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body.count).toBe(3)
+    expect(mockSendDailyDigest).toHaveBeenCalledWith(3)
+  })
+
+  it('gibt 200 zurück auch wenn sendDailyDigest wirft', async () => {
+    mockSendDailyDigest.mockRejectedValue(new Error('Resend down'))
+    const res = await POST(makeReq())
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body.success).toBe(true)
   })
 })
