@@ -18,7 +18,7 @@ Der Nexora AI BizDev Agent ist ein täglicher KI-Assistent, der den aktuellen St
 | P1 | Notion-Dokument-Ausarbeitung | Deployed ✓ |
 | P1 | Implementation Tracking & History | Deployed ✓ |
 | P2 | Context-Aware Suggestions (Live-Daten) | Deployed ✓ |
-| P2 | Daily Email-Digest | Planned |
+| P2 | Daily Email-Digest | Deployed ✓ |
 
 ## Success Metrics
 - ≥5 Vorschläge pro Woche von Stefan geprüft

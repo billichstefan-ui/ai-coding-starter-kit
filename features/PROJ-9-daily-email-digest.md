@@ -1,6 +1,6 @@
 # PROJ-9: Daily Email-Digest
 
-## Status: In Review
+## Status: Deployed
 **Created:** 2026-06-12
 **Last Updated:** 2026-06-12
 
@@ -239,4 +239,17 @@ Bestehende Deployed-Features nach PROJ-9 Änderungen getestet:
 - Security Audit: PASS
 
 ## Deployment
-_To be added by /deploy_
+
+**Deployed:** 2026-06-12
+**Branch:** claude/business-dev-agent-GYj8l → main
+**Vercel:** Auto-deploy via GitHub merge — Vercel Production
+
+### Neue Env-Vars (Vercel)
+| Variable | Gesetzt |
+|---|---|
+| `RESEND_API_KEY` | ✅ |
+| `RESEND_FROM_EMAIL` | ✅ (`onboarding@resend.dev`) |
+| `NORA_EMAIL_RECIPIENT` | ✅ (`billichstefan@gmail.com`) |
+
+### Erster Test
+NORA schickt ab dem nächsten Cron-Lauf (6 Uhr UTC = 8 Uhr Wien) automatisch eine E-Mail wenn neue Vorschläge generiert werden.
