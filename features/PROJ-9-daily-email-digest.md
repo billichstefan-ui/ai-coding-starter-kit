@@ -1,6 +1,6 @@
 # PROJ-9: Daily Email-Digest
 
-## Status: Planned
+## Status: Architected
 **Created:** 2026-06-12
 **Last Updated:** 2026-06-12
 
@@ -64,13 +64,72 @@ Täglich um 8 Uhr Wien sendet NORA eine kurze Benachrichtigungs-E-Mail an Stefan
 | Kein Unsubscribe-Link | Single-User-System; kein CAN-SPAM/GDPR-Risiko für interne Tool-Mails an den eigenen Account | 2026-06-12 |
 
 ### Technical Decisions
-<!-- Added by /architecture -->
+| Decision | Rationale | Date |
+|----------|-----------|------|
+| Neues Modul `src/lib/email.ts` statt direkte Integration in `route.ts` | Separation of concerns; leichter testbar; Resend-Abhängigkeit isoliert | 2026-06-12 |
+| Resend SDK (`resend` npm-Package) | Offizielles SDK, typisiert, kein SMTP-Setup, 100 Mails/Tag kostenlos | 2026-06-12 |
+| Integration nach Supabase-Insert, vor dem Return | Mail kommt nur bei echtem Erfolg; schlägt die Insert fehl, wird keine Mail gesendet | 2026-06-12 |
+| Empfänger via `NORA_EMAIL_RECIPIENT` Env-Var | Flexibler als hardcoded; kein Code-Change bei Adressänderung | 2026-06-12 |
+| Kein Retry bei Resend-Fehler | Cron läuft täglich; beim nächsten Lauf kommt die nächste Mail — Retry-Logik unnötige Komplexität | 2026-06-12 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### Datenfluss
+
+```
+Vercel Cron (täglich 6 Uhr UTC = 8 Uhr Wien)
+  ↓
+GET /api/generate-suggestions            [bestehend — PROJ-2]
+  ↓  already_generated? → return skipped (keine Mail)
+  ↓  fetchLiveContext()                  [bestehend — PROJ-7]
+  ↓  generateSuggestions() via Claude    [bestehend — PROJ-2]
+  ↓  Supabase INSERT ✓
+  ↓  sendDailyDigest(count)              [NEU — best-effort, eigenes try/catch]
+      └── RESEND_API_KEY fehlt? → still überspringen
+      └── Resend wirft Fehler? → still loggen, nicht propagieren
+  ↓  return { success: true, count }
+```
+
+### Neue / geänderte Dateien
+
+| Datei | Änderung |
+|-------|----------|
+| `src/lib/email.ts` | **Neu** — `sendDailyDigest(count: number): Promise<void>` — baut Mail-Inhalt, sendet via Resend SDK |
+| `src/app/api/generate-suggestions/route.ts` | **Kleine Erweiterung** — `sendDailyDigest(rows.length)` nach erfolgreichem Supabase-Insert, eingewickelt in try/catch |
+| `.env.local.example` | **Erweitert** — neue Env-Vars dokumentiert |
+
+### E-Mail Inhalt
+
+```
+Betreff: NORA: X neue BizDev-Vorschläge warten
+
+Hallo Stefan,
+
+NORA hat heute X neue BizDev-Vorschläge generiert.
+
+[Dashboard öffnen →]  →  https://ai-coding-starter-kit-psi.vercel.app/dashboard
+```
+
+Einfaches HTML, kein Branding für MVP.
+
+### Neue Env-Vars
+
+| Variable | Pflicht | Beschreibung |
+|----------|---------|--------------|
+| `RESEND_API_KEY` | Ja (sonst kein Versand) | Resend API-Schlüssel |
+| `RESEND_FROM_EMAIL` | Nein | Absender (Default: `onboarding@resend.dev` für Tests) |
+| `NORA_EMAIL_RECIPIENT` | Nein | Empfänger (Default: `billichstefan@gmail.com`) |
+
+### Neues Package
+
+| Package | Version | Zweck |
+|---------|---------|-------|
+| `resend` | latest | Offizielles Resend SDK — typisiert, kein SMTP |
+
+**Keine neuen Datenbank-Tabellen. Kein neues UI. Kein neuer Cron-Job.**
 
 ## QA Test Results
 _To be added by /qa_
