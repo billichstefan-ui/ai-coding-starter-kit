@@ -1,5 +1,5 @@
 -- ============================================================
--- NORA — Nexora AI BizDev Agent
+-- NORA — Kordix AI BizDev Agent
 -- Datenbankschema für Supabase (PROJ-1)
 --
 -- Ausführen in: Supabase Dashboard → SQL Editor → New Query
