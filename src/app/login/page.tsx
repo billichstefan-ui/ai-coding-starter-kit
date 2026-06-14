@@ -71,7 +71,7 @@ export default function LoginPage() {
                 backgroundClip: 'text',
               }}
             >
-              NEXORA AI
+              KORDIX AI
             </div>
             <div className="text-[10px] tracking-[3px] uppercase" style={{ color: '#7B81FF' }}>
               Intelligence · Compliance · Impact
