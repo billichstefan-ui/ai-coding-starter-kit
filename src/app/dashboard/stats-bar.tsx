@@ -13,7 +13,7 @@ export function StatsBar({ open, approved, rejected }: StatsBarProps) {
       </span>
       <span style={{ color: '#1C2340' }}>·</span>
       <span style={{ color: '#8892B0' }}>
-        <span className="font-semibold" style={{ color: '#4ADE80' }}>{approved}</span>
+        <span className="font-semibold" style={{ color: '#A6FF3C' }}>{approved}</span>
         {' '}bestätigt
       </span>
       <span style={{ color: '#1C2340' }}>·</span>

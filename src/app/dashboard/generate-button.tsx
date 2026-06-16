@@ -44,15 +44,15 @@ export function GenerateButton() {
     <Button
       onClick={handleGenerate}
       disabled={loading}
-      className="text-white hover:opacity-90 transition-opacity"
-      style={{ background: '#0078FF', border: 'none' }}
+      className="hover:opacity-90 transition-opacity"
+      style={{ background: '#38E5FF', color: '#070B1E', border: 'none', boxShadow: '0 0 12px rgba(56,229,255,0.4)' }}
       aria-label="Neue Vorschläge generieren"
     >
       {loading ? (
         <span className="flex items-center gap-1.5">
           <span
             className="inline-block w-3.5 h-3.5 border-2 rounded-full animate-spin"
-            style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }}
+            style={{ borderColor: 'rgba(7,11,30,0.25)', borderTopColor: '#070B1E' }}
           />
           <span className="hidden sm:inline">Generiere…</span>
         </span>

@@ -113,11 +113,11 @@ export function DashboardClient({ initialSuggestions, allTimeCounts }: Dashboard
             >
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
-                style={{ background: 'rgba(74, 222, 128, 0.1)', border: '1px solid rgba(74, 222, 128, 0.2)' }}
+                style={{ background: 'rgba(166, 255, 60, 0.1)', border: '1px solid rgba(166, 255, 60, 0.25)' }}
               >
                 ✓
               </div>
-              <p className="text-base font-semibold" style={{ color: '#4ADE80' }}>
+              <p className="text-base font-semibold" style={{ color: '#A6FF3C' }}>
                 Alle Vorschläge bearbeitet
               </p>
               <p className="text-sm" style={{ color: '#8892B0' }}>

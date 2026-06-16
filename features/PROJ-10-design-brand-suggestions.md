@@ -62,7 +62,7 @@
 
 ## Open Questions
 - [x] Ist `suggestions.category` ein DB-CHECK/Enum (Migration nötig)? → **Ja**, CHECK-Constraint `('marketing','product','operations')` auf `suggestions.category`. Erweiterung per idempotentem DROP/ADD CONSTRAINT (gleiches Muster wie PROJ-6 beim `status`-Feld). (`/architecture` 2026-06-16)
-- [x] Konkrete Badge-Farbe für „Design & Brand" → **Deep Teal `#0E9594`** (deutlich unterscheidbar; `#A720FF` ist bereits Operations, `#38E5FF` Marketing, `#0078FF` Produkt). Final bestätigt in `/frontend`. (`/architecture` 2026-06-16)
+- [x] Konkrete Badge-Farbe für „Design & Brand" → **Violett `#A720FF`** (nach dem Neon-Reskin 2026-06-16: Operations ist jetzt Pink `#FF2D9C`, Teal `#0E9594` wird vom „Umgesetzt"-Status belegt → Violett ist frei und passt in die Neon-Palette). Final bestätigt in `/frontend`. (`/architecture`, akt. 2026-06-16)
 - [ ] Muss die Notion-„Kategorie"-Select-Property die Option „Design & Brand" explizit erhalten, oder legt Notion sie beim ersten Schreiben automatisch an? → in `/backend` verifizieren.
 
 ## Decision Log
@@ -84,7 +84,7 @@
 | Zentrale Kategorie-Liste (`CATEGORIES` in `src/lib/anthropic.ts`) als Single Source of Truth | Ein neuer Wert propagiert automatisch in das KI-Output-Schema (`z.enum`) und den `Category`-Typ | 2026-06-16 |
 | DB: CHECK-Constraint auf `suggestions.category` per idempotentem DROP/ADD erweitern (Muster wie PROJ-6) | Sichere, mehrfach ausführbare Migration; vorhandener `idx_suggestions_category` bleibt gültig | 2026-06-16 |
 | Anzeige als eigener gruppierter Abschnitt statt neuem Filter-Control | Konsistent mit bestehender Gruppierung (Marketing/Produkt/Operations sind bereits Sektionen); kein neues Widget; bei 3–5 Vorschlägen/Tag ausreichend | 2026-06-16 |
-| Badge-Farbe Deep Teal `#0E9594` für `design` | Eindeutig unterscheidbar von Marketing-Cyan/Produkt-Blau/Operations-Violett; vermeidet Farbkollision mit Operations | 2026-06-16 |
+| Badge-Farbe Violett `#A720FF` für `design` | Nach Neon-Reskin: Marketing=Cyan, Produkt=Blau, Operations=Pink #FF2D9C, „Umgesetzt"=Teal #0E9594 → Violett ist frei, eindeutig und in der Palette | 2026-06-16 |
 | Eigener Design-Ausarbeitungs-Prompt (PROJ-8) statt nur Fallback | Liefert markenkonforme, strukturierte Notion-Dokumente für Design-/Brand-Maßnahmen | 2026-06-16 |
 | Visuelle Brand-Specs aus `docs/design-system.md` in `nora-context.ts` aufnehmen | Konkrete, markenkonforme Vorschläge statt generischer Design-Tipps (deckt AC „referenziert konkrete Markenelemente" ab) | 2026-06-16 |
 | Monday- & Notion-Mapping um `design → „Design & Brand"` ergänzen | Bestätigte Design-Vorschläge landen in eigener Monday-Gruppe / korrekt getaggtem Notion-Dokument — gleiche Pipeline, kein Sondercode | 2026-06-16 |

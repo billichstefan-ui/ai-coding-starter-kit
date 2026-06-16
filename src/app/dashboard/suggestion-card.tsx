@@ -21,7 +21,7 @@ export type Suggestion = {
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   marketing: { label: 'Marketing', color: '#38E5FF' },
   product: { label: 'Produkt', color: '#0078FF' },
-  operations: { label: 'Operations', color: '#A720FF' },
+  operations: { label: 'Operations', color: '#FF2D9C' },
 }
 
 type SuggestionCardProps = {
@@ -64,6 +64,7 @@ export function SuggestionCard({ suggestion, onAction }: SuggestionCardProps) {
               color: category.color,
               borderColor: category.color + '40',
               background: category.color + '15',
+              boxShadow: `0 0 10px ${category.color}33`,
             }}
           >
             {category.label}
@@ -95,7 +96,7 @@ export function SuggestionCard({ suggestion, onAction }: SuggestionCardProps) {
             <button
               onClick={() => setIsBodyExpanded(!isBodyExpanded)}
               className="text-xs mt-1 hover:opacity-80"
-              style={{ color: '#0078FF' }}
+              style={{ color: '#38E5FF' }}
             >
               {isBodyExpanded ? 'weniger anzeigen' : 'mehr anzeigen'}
             </button>
@@ -108,7 +109,7 @@ export function SuggestionCard({ suggestion, onAction }: SuggestionCardProps) {
             <CollapsibleTrigger asChild>
               <button
                 className="flex items-center gap-1 text-xs hover:opacity-80"
-                style={{ color: '#0078FF' }}
+                style={{ color: '#38E5FF' }}
                 aria-label={isDetailsOpen ? 'Details ausblenden' : 'Details anzeigen'}
               >
                 {isDetailsOpen ? (
@@ -145,14 +146,14 @@ export function SuggestionCard({ suggestion, onAction }: SuggestionCardProps) {
             disabled={isLoading !== null}
             size="sm"
             className="flex-1 text-xs font-medium h-9 transition-all hover:opacity-90"
-            style={{ background: '#0078FF', color: '#FFFFFF', border: 'none' }}
+            style={{ background: '#38E5FF', color: '#070B1E', border: 'none', boxShadow: '0 0 12px rgba(56,229,255,0.4)' }}
             aria-label={`Vorschlag bestätigen: ${suggestion.title}`}
           >
             {isLoading === 'approve' ? (
               <span className="flex items-center gap-1.5">
                 <span
                   className="inline-block w-3 h-3 border-2 rounded-full animate-spin"
-                  style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }}
+                  style={{ borderColor: 'rgba(7,11,30,0.25)', borderTopColor: '#070B1E' }}
                 />
                 Speichere…
               </span>

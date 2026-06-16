@@ -17,7 +17,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   },
   approved: {
     label: 'Bestätigt',
-    color: '#4ADE80',
+    color: '#A6FF3C',
     icon: <CheckCircle2 className="w-3 h-3" aria-hidden="true" />,
   },
   rejected: {
@@ -35,7 +35,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   marketing: { label: 'Marketing', color: '#38E5FF' },
   product: { label: 'Produkt', color: '#0078FF' },
-  operations: { label: 'Operations', color: '#A720FF' },
+  operations: { label: 'Operations', color: '#FF2D9C' },
 }
 
 const FILTER_OPTIONS: { value: StatusFilter; label: string }[] = [
@@ -76,7 +76,7 @@ export function HistoryView({ suggestions, extraCounts, onAction }: HistoryViewP
         </span>
         <span style={{ color: '#1C2340' }}>·</span>
         <span style={{ color: '#8892B0' }}>
-          <span className="font-semibold" style={{ color: '#4ADE80' }}>{approved}</span>
+          <span className="font-semibold" style={{ color: '#A6FF3C' }}>{approved}</span>
           {' '}bestätigt
         </span>
         <span style={{ color: '#1C2340' }}>·</span>
@@ -95,7 +95,7 @@ export function HistoryView({ suggestions, extraCounts, onAction }: HistoryViewP
             className="px-3 py-1.5 rounded-md text-xs font-medium transition-all"
             style={
               activeFilter === option.value
-                ? { background: '#0078FF', color: '#FFFFFF' }
+                ? { background: '#38E5FF', color: '#070B1E' }
                 : { background: '#0E1430', color: '#8892B0', border: '1px solid #1C2340' }
             }
             aria-pressed={activeFilter === option.value}

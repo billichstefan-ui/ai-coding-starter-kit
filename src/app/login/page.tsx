@@ -44,16 +44,17 @@ export default function LoginPage() {
       className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
       style={{ background: '#070B1E', fontFamily: 'var(--font-sora), sans-serif' }}
     >
-      {/* Background glow */}
+      {/* Neon splatter background */}
       <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         aria-hidden
-      >
-        <div
-          className="w-[600px] h-[600px] rounded-full"
-          style={{ background: 'radial-gradient(circle, #0078FF15, transparent 70%)' }}
-        />
-      </div>
+        style={{
+          background:
+            'radial-gradient(420px circle at 18% 22%, rgba(56,229,255,0.16), transparent 60%),' +
+            'radial-gradient(380px circle at 82% 28%, rgba(255,45,156,0.16), transparent 60%),' +
+            'radial-gradient(360px circle at 70% 88%, rgba(166,255,60,0.12), transparent 60%)',
+        }}
+      />
 
       <div className="relative z-10 w-full max-w-[420px]">
         <div
@@ -75,11 +76,11 @@ export default function LoginPage() {
           <div className="flex justify-center mb-6">
             <div
               className="flex items-center gap-2 px-4 py-2 rounded-full border text-xs"
-              style={{ background: '#0078FF18', borderColor: '#0078FF44', color: '#38E5FF' }}
+              style={{ background: '#38E5FF12', borderColor: '#38E5FF40', color: '#38E5FF' }}
             >
               <span
                 className="w-2 h-2 rounded-full animate-pulse"
-                style={{ background: '#00C875', boxShadow: '0 0 6px #00C875' }}
+                style={{ background: '#A6FF3C', boxShadow: '0 0 6px #A6FF3C' }}
               />
               NORA ist bereit
             </div>
@@ -112,10 +113,10 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="stefan@nexora.ai"
+                placeholder="stefan@kicasso.ai"
                 required
                 autoComplete="email"
-                className="border text-white placeholder:text-[#3D4A6B] focus-visible:ring-1 focus-visible:ring-[#0078FF] focus-visible:ring-offset-0"
+                className="border text-white placeholder:text-[#3D4A6B] focus-visible:ring-1 focus-visible:ring-[#38E5FF] focus-visible:ring-offset-0"
                 style={{ background: '#070B1E', borderColor: '#1C2340' }}
               />
             </div>
@@ -136,7 +137,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 required
                 autoComplete="current-password"
-                className="border text-white placeholder:text-[#3D4A6B] focus-visible:ring-1 focus-visible:ring-[#0078FF] focus-visible:ring-offset-0"
+                className="border text-white placeholder:text-[#3D4A6B] focus-visible:ring-1 focus-visible:ring-[#38E5FF] focus-visible:ring-offset-0"
                 style={{ background: '#070B1E', borderColor: '#1C2340' }}
               />
             </div>
@@ -148,8 +149,9 @@ export default function LoginPage() {
               style={{
                 background: isDisabled
                   ? '#1C2340'
-                  : 'linear-gradient(135deg, #38E5FF, #0078FF, #7B81FF, #A720FF)',
-                color: isDisabled ? '#3D4A6B' : '#fff',
+                  : 'linear-gradient(135deg, #38E5FF, #FF2D9C)',
+                color: isDisabled ? '#3D4A6B' : '#070B1E',
+                boxShadow: isDisabled ? 'none' : '0 0 18px rgba(56,229,255,0.35)',
               }}
             >
               {loading ? 'Anmelden…' : 'Anmelden'}

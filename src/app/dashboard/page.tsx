@@ -28,9 +28,20 @@ export default async function DashboardPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col relative overflow-hidden"
       style={{ background: '#070B1E', fontFamily: 'var(--font-sora), sans-serif' }}
     >
+      {/* Neon splatter background */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(500px circle at 12% 8%, rgba(56,229,255,0.10), transparent 60%),' +
+            'radial-gradient(460px circle at 90% 14%, rgba(255,45,156,0.10), transparent 60%),' +
+            'radial-gradient(420px circle at 80% 92%, rgba(166,255,60,0.08), transparent 60%)',
+        }}
+      />
       <header
         className="flex items-center justify-between px-6 py-4 border-b sticky top-0 z-10"
         style={{ borderColor: '#1C2340', background: '#070B1E' }}
@@ -44,7 +55,7 @@ export default async function DashboardPage() {
             className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium"
             style={{ background: '#0E1430', color: '#8892B0', border: '1px solid #1C2340' }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#A6FF3C', boxShadow: '0 0 6px #A6FF3C' }} aria-hidden="true" />
             NORA
           </div>
         </div>
@@ -54,7 +65,9 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <DashboardClient initialSuggestions={suggestions} allTimeCounts={allTimeCounts} />
+      <div className="relative z-10 flex-1 flex flex-col">
+        <DashboardClient initialSuggestions={suggestions} allTimeCounts={allTimeCounts} />
+      </div>
     </div>
   )
 }
