@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -63,6 +64,14 @@ export default function LoginPage() {
         >
           {/* Logo */}
           <div className="text-center mb-8">
+            <Image
+              src="/brand/kicasso-mascot.png"
+              alt="KIcasso"
+              width={72}
+              height={72}
+              priority
+              className="mx-auto mb-3"
+            />
             <div className="text-3xl font-extrabold tracking-[1px] mb-1">
               <span style={{ color: '#38E5FF', textShadow: '0 0 7px #38E5FF, 0 0 18px rgba(56,229,255,0.6)' }}>KI</span>
               <span style={{ color: '#FF2D9C', textShadow: '0 0 7px #FF2D9C, 0 0 18px rgba(255,45,156,0.6)' }}>casso</span>
