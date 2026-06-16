@@ -1,6 +1,6 @@
 # PROJ-10: Design & Brand (Vorschlags-Kategorie)
 
-## Status: Planned
+## Status: Architected
 **Created:** 2026-06-16
 **Last Updated:** 2026-06-16
 
