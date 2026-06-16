@@ -36,16 +36,9 @@ export default async function DashboardPage() {
         style={{ borderColor: '#1C2340', background: '#070B1E' }}
       >
         <div className="flex items-center gap-3">
-          <div
-            className="text-sm font-extrabold tracking-[2px]"
-            style={{
-              background: 'linear-gradient(90deg, #38E5FF, #0078FF, #7B81FF, #A720FF)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            KIcasso
+          <div className="text-base font-extrabold tracking-[1px]">
+            <span style={{ color: '#38E5FF', textShadow: '0 0 5px #38E5FF, 0 0 12px rgba(56,229,255,0.55)' }}>KI</span>
+            <span style={{ color: '#FF2D9C', textShadow: '0 0 5px #FF2D9C, 0 0 12px rgba(255,45,156,0.55)' }}>casso</span>
           </div>
           <div
             className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium"

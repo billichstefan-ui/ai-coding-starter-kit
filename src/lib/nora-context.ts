@@ -37,6 +37,15 @@ drastisch zu beschleunigen (z. B. Validierungsdokumentation, Compliance-Nachweis
 Intelligent, Vertrauenswürdig (höchste Qualität & GMP-Konformität), Innovativ,
 Vernetzt, Zukunftsorientiert, Impact (Mehrwert für Gesundheit & Gesellschaft).
 
+## Visuelle Identität (Neon-Graffiti, seit 2026-06)
+KIcasso tritt visuell als mutige Neon-Graffiti-/Street-Art-Marke auf:
+- Palette: Neon-Cyan #38E5FF, Hot-Pink/Magenta #FF2D9C, Neon-Lime #A6FF3C auf dunkler,
+  rissiger Wand (#070B1E / #12101C) — mit Glow, Farbspritzern und tropfender Farbe (Drip).
+- Maskottchen: Neon-Cyborg-Kopf (Cyan-Outline, Antenne, Kamera-Blenden-Auge, neon-grüner
+  Wackelmund, tropfende Farbe). Wortmarke: „KI" (Cyan) + „casso" (Pink), Graffiti-Drip.
+- Vibe: kreativ, verspielt, energetisch — visuell auffällig, während die fachliche
+  Tonalität (Pharma/GMP) seriös bleibt. Details: docs/design-system.md.
+
 ## Aktuelle Geschäftsziele (BizDev-Fokus)
 1. Sichtbarkeit & Thought Leadership im Pharma/GMP-Umfeld aufbauen (v. a. LinkedIn)
 2. QualiPilot von der Idee zum verkaufsfähigen ersten Produkt bringen
