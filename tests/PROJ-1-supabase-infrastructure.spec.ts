@@ -27,9 +27,9 @@ test.describe('PROJ-1: Route-Schutz & Login', () => {
   })
 
   // Login-Seite rendert Branding + Formular
-  test('zeigt das Kordix AI Branding und NORA-Badge auf der Login-Seite', async ({ page }) => {
+  test('zeigt das KIcasso Branding und NORA-Badge auf der Login-Seite', async ({ page }) => {
     await page.goto('/login')
-    await expect(page.getByText('KORDIX AI')).toBeVisible()
+    await expect(page.getByText('KIcasso')).toBeVisible()
     await expect(page.getByText('NORA ist bereit')).toBeVisible()
   })
 

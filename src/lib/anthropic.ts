@@ -85,7 +85,7 @@ function buildPrompt(liveContext: LiveContext): string {
 ${contextBlock}
 
 ## Deine Aufgabe
-Du bist NORA, der tägliche BizDev-Assistent von Kordix AI. Generiere ${MIN_SUGGESTIONS}–${MAX_SUGGESTIONS} konkrete, sofort umsetzbare Verbesserungsvorschläge für Stefan.
+Du bist NORA, der tägliche BizDev-Assistent von KIcasso. Generiere ${MIN_SUGGESTIONS}–${MAX_SUGGESTIONS} konkrete, sofort umsetzbare Verbesserungsvorschläge für Stefan.
 
 Verteile sie flexibel auf die drei Kategorien (marketing, product, operations) — wähle die heute relevantesten Bereiche, keine feste Quote. Jeder Vorschlag muss für einen Solo-Gründer in begrenzter Zeit realistisch allein umsetzbar sein.
 
@@ -94,16 +94,16 @@ Für jeden Vorschlag:
 - **title**: knackige, konkrete Überschrift (z. B. "LinkedIn-Post: QualiPilot spart 80% Validierungszeit")
 - **body**: der konkrete Vorschlag + erste Umsetzungsschritte (2–4 Sätze)
 - **insight**: das WARUM — die Begründung/Logik dahinter (1–2 Sätze)
-- **source**: NORAs Denkgrundlage (z. B. "Abgeleitet aus Kordix-Positionierung + GMP-Zielgruppe")
+- **source**: NORAs Denkgrundlage (z. B. "Abgeleitet aus KIcasso-Positionierung + GMP-Zielgruppe")
 
-Vermeide generisches Marketing-Geschwätz. Sei fachlich, GMP-/Pharma-kompetent und spezifisch für Kordix AI.`
+Vermeide generisches Marketing-Geschwätz. Sei fachlich, GMP-/Pharma-kompetent und spezifisch für KIcasso.`
 }
 
 const CATEGORY_PROMPTS: Record<string, string> = {
   marketing: `Schreibe einen fertigen LinkedIn-Post oder Blogpost-Entwurf (~200–250 Wörter) auf Basis dieses Marketing-Vorschlags.
 
 Gliedere das Dokument in folgende Abschnitte:
-1. "LinkedIn-Post-Entwurf" — Der komplett fertig formulierte Post: Hook, Hauptaussage mit konkretem Bezug auf QualiPilot/Kordix AI, Call-to-Action.
+1. "LinkedIn-Post-Entwurf" — Der komplett fertig formulierte Post: Hook, Hauptaussage mit konkretem Bezug auf QualiPilot/KIcasso, Call-to-Action.
 2. "Hintergrund & Strategie" — Warum dieser Post jetzt? Für wen genau? Welchen Mehrwert bringt er für Stefans Zielgruppe?
 3. "Nächste Aktion" — Konkrete erste Schritte für Stefan (z. B. Hashtags, bester Veröffentlichungszeitpunkt).`,
 
@@ -126,7 +126,7 @@ Gliedere das Dokument in folgende Abschnitte:
 const DEFAULT_ELABORATION_PROMPT = `Schreibe ein strategisches Umsetzungs-Dokument (~300 Wörter) auf Basis dieses BizDev-Vorschlags.
 
 Gliedere das Dokument in folgende Abschnitte:
-1. "Kontext" — Hintergrund und Relevanz des Vorschlags für Kordix AI.
+1. "Kontext" — Hintergrund und Relevanz des Vorschlags für KIcasso.
 2. "Ziel" — Was konkret erreicht werden soll.
 3. "Maßnahmen" — Konkrete Umsetzungsschritte.
 4. "Nächste Aktion" — Der erste konkrete Schritt für Stefan.`
@@ -163,7 +163,7 @@ function buildElaborationPrompt(params: {
 
 ${categoryInstruction}
 
-Schreibe in der Markenstimme von Kordix AI: premium, fachlich fundiert, GMP-/Pharma-kompetent. Kein generisches Marketing-Geschwätz — konkret und auf Augenhöhe mit Fachentscheidern.
+Schreibe in der Markenstimme von KIcasso: premium, fachlich fundiert, GMP-/Pharma-kompetent. Kein generisches Marketing-Geschwätz — konkret und auf Augenhöhe mit Fachentscheidern.
 Sprache: Deutsch.`
 }
 

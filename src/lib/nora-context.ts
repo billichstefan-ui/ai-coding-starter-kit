@@ -1,5 +1,5 @@
 /**
- * NORA — Firmen-Briefing über Kordix AI (Wissensbasis der Suggestion Engine, PROJ-2)
+ * NORA — Firmen-Briefing über KIcasso (Wissensbasis der Suggestion Engine, PROJ-2)
  *
  * Dieser Kontext wird Claude bei jedem Generierungs-Lauf mitgegeben. Er ersetzt
  * (für das MVP) externe Live-Datenquellen. Stefan kann diesen Text jederzeit
@@ -8,7 +8,7 @@
  * Quelle des Erstentwurfs: docs/PRD.md + docs/design-system.md (2026-06-07).
  */
 export const NORA_COMPANY_CONTEXT = `
-# Unternehmen: Kordix AI
+# Unternehmen: KIcasso
 
 **Tagline:** Intelligence. Compliance. Impact.
 **Positionierung:** KI-gestützte Lösungen für Excellence in Pharma & Healthcare.
@@ -20,7 +20,7 @@ Development wird leicht zugunsten von Produktarbeit vernachlässigt — genau hi
 soll NORA gegensteuern.
 
 ## Erstes Produkt: QualiPilot
-QualiPilot ist Produkt #1 von Kordix AI ("QualiPilot — a Kordix AI product").
+QualiPilot ist Produkt #1 von KIcasso ("QualiPilot — a KIcasso product").
 Es richtet sich an die GMP-Qualifizierung/Validierung im pharmazeutischen Umfeld
 und zielt darauf ab, zeitaufwändige, regulierte Qualifizierungsprozesse durch KI
 drastisch zu beschleunigen (z. B. Validierungsdokumentation, Compliance-Nachweise).

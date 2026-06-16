@@ -58,8 +58,8 @@ test.describe('PROJ-8: Dokument-Ausarbeitung bei Bestätigung (eingeloggt)', () 
     test.fixme()
   })
 
-  // AC-4: Kordix-Markenstimme (manuell in Notion zu prüfen)
-  test.skip('generiert Dokument in GMP-/Pharma-kompetenter Kordix-Markenstimme', async ({ page }) => {
+  // AC-4: KIcasso-Markenstimme (manuell in Notion zu prüfen)
+  test.skip('generiert Dokument in GMP-/Pharma-kompetenter KIcasso-Markenstimme', async ({ page }) => {
     // Erfordert manuelle inhaltliche Prüfung des Notion-Dokuments
     test.fixme()
   })

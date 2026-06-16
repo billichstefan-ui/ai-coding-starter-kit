@@ -63,7 +63,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="text-center mb-8">
             <div
-              className="text-2xl font-extrabold tracking-[5px] uppercase mb-1"
+              className="text-2xl font-extrabold tracking-[2px] mb-1"
               style={{
                 background: 'linear-gradient(90deg, #38E5FF, #0078FF, #7B81FF, #A720FF)',
                 WebkitBackgroundClip: 'text',
@@ -71,7 +71,7 @@ export default function LoginPage() {
                 backgroundClip: 'text',
               }}
             >
-              KORDIX AI
+              KIcasso
             </div>
             <div className="text-[10px] tracking-[3px] uppercase" style={{ color: '#7B81FF' }}>
               Intelligence · Compliance · Impact

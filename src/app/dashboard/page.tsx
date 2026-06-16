@@ -37,7 +37,7 @@ export default async function DashboardPage() {
       >
         <div className="flex items-center gap-3">
           <div
-            className="text-sm font-extrabold tracking-[4px] uppercase"
+            className="text-sm font-extrabold tracking-[2px]"
             style={{
               background: 'linear-gradient(90deg, #38E5FF, #0078FF, #7B81FF, #A720FF)',
               WebkitBackgroundClip: 'text',
@@ -45,7 +45,7 @@ export default async function DashboardPage() {
               backgroundClip: 'text',
             }}
           >
-            KORDIX AI
+            KIcasso
           </div>
           <div
             className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium"

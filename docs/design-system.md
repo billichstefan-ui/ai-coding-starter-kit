@@ -1,10 +1,10 @@
-# Kordix AI Design System
+# KIcasso Design System
 
 > Source: Kordix_AI_Brand_Guide.md (Google Drive, 05.06.2026)
 
 ## Brand
 
-- **Name:** Kordix AI
+- **Name:** KIcasso
 - **Tagline:** Intelligence. Compliance. Impact.
 - **Positioning:** AI-Powered Solutions for Pharma & Healthcare Excellence
 
@@ -34,7 +34,7 @@ Signature Look: **Dark Premium** mit Cyan→Violet-Verlauf auf tiefem Navy/Schwa
 ## Logo
 
 - **Bildmarke:** Hexagon-Netzwerk mit 3D-Kristall (Ikosaeder) im Blau-Violett-Verlauf
-- **Wortmarke:** „KORDIX" (weiß) + „AI" (Cyan/Blau-Akzent)
+- **Wortmarke:** „KIcasso" — „KI" (Cyan/Blau-Akzent) + „casso" (weiß). _Provisorisch nach Rebrand; finales Treatment in PROJ-10._
 
 ## Brand Values
 
@@ -49,6 +49,6 @@ Signature Look: **Dark Premium** mit Cyan→Violet-Verlauf auf tiefem Navy/Schwa
 
 ## Product Branding: QualiPilot
 
-QualiPilot ist **Produkt #1 von Kordix AI**. Co-Branding-Regel:
+QualiPilot ist **Produkt #1 von KIcasso**. Co-Branding-Regel:
 
-> **QualiPilot** — *a Kordix AI product*
+> **QualiPilot** — *a KIcasso product*
