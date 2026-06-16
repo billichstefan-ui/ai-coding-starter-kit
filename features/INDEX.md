@@ -24,7 +24,8 @@
 | PROJ-7 | Context-Aware Suggestions (Live-Daten) | Deployed | [Spec](PROJ-7-context-aware-suggestions.md) | 2026-06-05 |
 | PROJ-8 | Notion-Dokument-Ausarbeitung | Deployed | [Spec](PROJ-8-notion-document-elaboration.md) | 2026-06-07 |
 | PROJ-9 | Daily Email-Digest | Deployed | [Spec](PROJ-9-daily-email-digest.md) | 2026-06-12 |
+| PROJ-10 | Design & Brand (Vorschlags-Kategorie) | Planned | [Spec](PROJ-10-design-brand-suggestions.md) | 2026-06-16 |
 
 <!-- Add features above this line -->
 
-## Next Available ID: PROJ-10
+## Next Available ID: PROJ-11
