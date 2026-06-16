@@ -50,7 +50,7 @@ Täglich um 8 Uhr Wien sendet NORA eine kurze Benachrichtigungs-E-Mail an Stefan
 - Empfänger: `billichstefan@gmail.com` (hardcoded oder via Env-Var `NORA_EMAIL_RECIPIENT`)
 
 ## Open Questions
-- [ ] Eigene Absender-Domain gewünscht (z.B. `nora@nexora.ai`)? Erfordert DNS-Setup in Resend. Kann auch nach dem MVP nachgerüstet werden.
+- [ ] Eigene Absender-Domain gewünscht (z.B. `nora@kicasso.ai`)? Erfordert DNS-Setup in Resend. Kann auch nach dem MVP nachgerüstet werden.
 
 ## Decision Log
 

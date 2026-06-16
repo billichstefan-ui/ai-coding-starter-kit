@@ -128,7 +128,7 @@ App (Next.js App Router)
 │
 ├── /login                             ← Öffentliche Route (kein Auth nötig)
 │   └── LoginPage
-│       ├── Branding (NEXORA AI Logo + NORA-Status-Badge)
+│       ├── Branding (KIcasso Logo + NORA-Status-Badge)
 │       └── LoginForm
 │           ├── Input — E-Mail         (shadcn/ui — bereits installiert)
 │           ├── Input — Passwort       (shadcn/ui — bereits installiert)

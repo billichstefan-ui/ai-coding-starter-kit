@@ -47,7 +47,7 @@ test.describe('PROJ-1: Route-Schutz & Login', () => {
 
   test('Anmelden-Button wird aktiv, sobald beide Felder ausgefüllt sind', async ({ page }) => {
     await page.goto('/login')
-    await page.locator('#email').fill('stefan@nexora.ai')
+    await page.locator('#email').fill('stefan@kicasso.ai')
     await page.locator('#password').fill('geheim123')
     await expect(page.getByRole('button', { name: 'Anmelden' })).toBeEnabled()
   })
