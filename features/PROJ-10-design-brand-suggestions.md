@@ -14,7 +14,7 @@
 - Als Stefan möchte ich, dass NORA auch Vorschläge zu **Design & Brand** (visuelle Identität, Logo, Farben, Konsistenz) generiert, damit KIcasso markenkonform nach außen auftritt — ohne dass ich selbst daran denken muss.
 - Als Stefan möchte ich, dass Design-Vorschläge auf dem **KIcasso Brand Guide** (Sora, #0078FF, Gradient Cyan→Violet, Navy #070B1E, Dark Premium) basieren, damit sie konkret statt generisch sind.
 - Als Stefan möchte ich Design-Vorschläge im **selben Review-Dashboard** sehen und bestätigen wie die anderen Kategorien, damit mein 2-Minuten-Workflow gleich bleibt.
-- Als Stefan möchte ich Design-Vorschläge im **Kategorie-Filter** ein-/ausblenden können, um gezielt nach Thema zu reviewen.
+- Als Stefan möchte ich Design-Vorschläge in einem **eigenen, klar beschrifteten Abschnitt „Design & Brand"** sehen, um sie gezielt nach Thema zu reviewen.
 - Als Stefan möchte ich bestätigte Design-Vorschläge wie gewohnt als **Monday-Task / Notion-Doku** umsetzen lassen, ohne neuen Prozess.
 
 ## Out of Scope
@@ -38,7 +38,7 @@
 
 ### Anzeige & Review (PROJ-3)
 - [ ] Angenommen ein `design`-Vorschlag existiert, wenn Stefan das Dashboard öffnet, dann wird er mit einem eigenen Badge „Design & Brand" und einer eigenen Kategorie-Farbe angezeigt.
-- [ ] Angenommen das Dashboard hat einen Kategorie-Filter, wenn Stefan „Design & Brand" auswählt, dann werden nur `design`-Vorschläge angezeigt.
+- [ ] Angenommen offene `design`-Vorschläge existieren, wenn Stefan das Dashboard öffnet, dann werden sie in einem eigenen gruppierten Abschnitt „Design & Brand" zusammengefasst (analog zu den bestehenden Kategorie-Abschnitten Marketing/Produkt/Operations).
 - [ ] Angenommen ein `design`-Vorschlag wird angezeigt, wenn Stefan ihn bestätigt oder ablehnt, dann funktioniert der Review-Flow identisch zu den anderen Kategorien.
 
 ### Umsetzung & Robustheit
@@ -61,8 +61,9 @@
 - Dashboard sollte Kategorien möglichst datengetrieben behandeln (Badge/Filter nicht hart auf drei Werte verdrahtet).
 
 ## Open Questions
-- [ ] Konkrete Badge-Farbe für „Design & Brand" (Vorschlag: Violett-Akzent #A720FF des Gradients) → final in `/frontend`.
-- [ ] Ist `suggestions.category` ein DB-CHECK/Enum (Migration nötig) oder freier Text? → in `/architecture` bzw. `/backend` prüfen.
+- [x] Ist `suggestions.category` ein DB-CHECK/Enum (Migration nötig)? → **Ja**, CHECK-Constraint `('marketing','product','operations')` auf `suggestions.category`. Erweiterung per idempotentem DROP/ADD CONSTRAINT (gleiches Muster wie PROJ-6 beim `status`-Feld). (`/architecture` 2026-06-16)
+- [x] Konkrete Badge-Farbe für „Design & Brand" → **Deep Teal `#0E9594`** (deutlich unterscheidbar; `#A720FF` ist bereits Operations, `#38E5FF` Marketing, `#0078FF` Produkt). Final bestätigt in `/frontend`. (`/architecture` 2026-06-16)
+- [ ] Muss die Notion-„Kategorie"-Select-Property die Option „Design & Brand" explizit erhalten, oder legt Notion sie beim ersten Schreiben automatisch an? → in `/backend` verifizieren.
 
 ## Decision Log
 
@@ -77,16 +78,70 @@
 | Vorschläge bleiben Text-Entwürfe (keine Visual-Generierung) | Konsistent mit „kein Auto-Posting"; hält Scope klein | 2026-06-16 |
 
 ### Technical Decisions
-<!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
-| _Noch offen_ | _wird in `/architecture` ergänzt_ | |
+| Erweiterung der bestehenden `category`-Mechanik statt eigenes Feature/Tabelle | Rückwärtskompatibel; nutzt die vorhandene Review→Monday/Notion-Pipeline; minimaler Aufwand | 2026-06-16 |
+| Zentrale Kategorie-Liste (`CATEGORIES` in `src/lib/anthropic.ts`) als Single Source of Truth | Ein neuer Wert propagiert automatisch in das KI-Output-Schema (`z.enum`) und den `Category`-Typ | 2026-06-16 |
+| DB: CHECK-Constraint auf `suggestions.category` per idempotentem DROP/ADD erweitern (Muster wie PROJ-6) | Sichere, mehrfach ausführbare Migration; vorhandener `idx_suggestions_category` bleibt gültig | 2026-06-16 |
+| Anzeige als eigener gruppierter Abschnitt statt neuem Filter-Control | Konsistent mit bestehender Gruppierung (Marketing/Produkt/Operations sind bereits Sektionen); kein neues Widget; bei 3–5 Vorschlägen/Tag ausreichend | 2026-06-16 |
+| Badge-Farbe Deep Teal `#0E9594` für `design` | Eindeutig unterscheidbar von Marketing-Cyan/Produkt-Blau/Operations-Violett; vermeidet Farbkollision mit Operations | 2026-06-16 |
+| Eigener Design-Ausarbeitungs-Prompt (PROJ-8) statt nur Fallback | Liefert markenkonforme, strukturierte Notion-Dokumente für Design-/Brand-Maßnahmen | 2026-06-16 |
+| Visuelle Brand-Specs aus `docs/design-system.md` in `nora-context.ts` aufnehmen | Konkrete, markenkonforme Vorschläge statt generischer Design-Tipps (deckt AC „referenziert konkrete Markenelemente" ab) | 2026-06-16 |
+| Monday- & Notion-Mapping um `design → „Design & Brand"` ergänzen | Bestätigte Design-Vorschläge landen in eigener Monday-Gruppe / korrekt getaggtem Notion-Dokument — gleiche Pipeline, kein Sondercode | 2026-06-16 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+**Designed:** 2026-06-16 · Braucht **Backend + Frontend** (keine reine UI-Änderung).
+
+### Grundprinzip
+„Design & Brand" ist **kein eigenes Modul**, sondern ein **vierter Wert** in der bereits existierenden Kategorie-Mechanik. Vorschläge entstehen, werden reviewt und umgesetzt über exakt dieselben Wege wie heute — nur dass an den Stellen, die die drei Kategorien fest kennen, ein vierter Wert ergänzt wird. Dadurch bleibt alles rückwärtskompatibel und der Aufwand klein.
+
+### Was sich ändert (Touchpoint-Übersicht)
+
+```
+Generierung (NORA's Gehirn)
+├── Kategorie-Liste: marketing, product, operations  →  + design   (zentrale Liste)
+├── Generierungs-Prompt: "3 Kategorien"  →  "4 Kategorien" + Design-Anleitung
+└── Wissensbasis (nora-context): + visuelle Brand-Specs aus design-system.md
+        (Sora, #0078FF, Gradient Cyan→Violet, Navy #070B1E, Dark Premium)
+
+Datenbank (Supabase)
+└── Erlaubte Kategorie-Werte: + "design"   (sichere, wiederholbare Migration; Index bleibt)
+
+Review-Dashboard (Frontend)
+├── Vorschlags-Karte: Badge "Design & Brand" (Deep Teal #0E9594)
+├── Dashboard: neuer gruppierter Abschnitt "Design & Brand"
+└── Verlauf: erbt das Badge automatisch (nutzt dieselbe Karte)
+
+Umsetzung (unverändert in der Logik, nur Mapping ergänzt)
+├── Monday.com: neue Gruppe "Design & Brand" für bestätigte Design-Tasks
+├── Notion: Kategorie-Option "Design & Brand" für getaggte Dokumente
+└── Dokument-Ausarbeitung (PROJ-8): eigene Design-Schreibvorlage
+        (Ausgangslage → markenkonforme Lösung → Umsetzungsschritte → Erfolgskriterium)
+```
+
+### Datenmodell (in Worten)
+- Ein Vorschlag hat weiterhin: ID, Datum, **Kategorie**, Titel, Body, Insight, Quelle, Status.
+- Die **Kategorie** kann künftig einer von vier Werten sein: Marketing, Produkt, Operations, **Design**.
+- Gespeichert in der **bestehenden `suggestions`-Tabelle**. Die Datenbank-Regel, die die erlaubten Kategorien einschränkt, bekommt den neuen Wert hinzugefügt.
+- **Keine neue Tabelle, keine neuen Felder.** Bestehende Vorschläge bleiben unverändert gültig.
+
+### Tech-Entscheidungen (warum)
+- **Erweitern statt neu bauen:** Eine zusätzliche Kategorie reicht — das ganze System (Review, Monday, Notion, Verlauf) funktioniert dadurch ohne neue Bausteine.
+- **Eine zentrale Kategorie-Liste:** Der neue Wert wird an einer Stelle eingetragen und wirkt automatisch dort, wo die KI-Antwort geprüft wird → weniger Fehlerquellen.
+- **Sichere DB-Migration:** Die Regel für erlaubte Kategorien wird nach dem schon bewährten Muster (wie beim Status-Feld in PROJ-6) erweitert — gefahrlos mehrfach ausführbar.
+- **Gruppierter Abschnitt statt Filter:** Passt zum heutigen Dashboard (das schon nach Kategorie gruppiert) und ist bei 3–5 Vorschlägen/Tag völlig ausreichend.
+- **Eigene Badge-Farbe (Deep Teal):** klar unterscheidbar von den bestehenden drei Farben.
+
+### Abhängigkeiten / neue Pakete
+- **Keine neuen Pakete.** Nutzt die vorhandenen Integrationen (Anthropic SDK, Supabase, Monday-/Notion-Anbindung).
+
+### Hinweis für /backend
+- Nach der Migration muss `supabase/schema.sql` einmal im Supabase SQL-Editor neu ausgeführt werden (idempotent, gefahrlos).
+- Notion-„Kategorie"-Select-Option „Design & Brand" verifizieren (siehe Open Questions).
 
 ## QA Test Results
 _To be added by /qa_
