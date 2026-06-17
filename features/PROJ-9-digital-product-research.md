@@ -190,6 +190,19 @@ Farbwahl: **Indigo/Periwinkle `#7B81FF`** aus dem Design-System (`docs/design-sy
 
 Verifikation: `npx tsc --noEmit` läuft sauber durch (exit 0). Die neue Kategorie rendert über denselben Card-/Gruppen-Pfad wie die drei bestehenden Kategorien; sie wird sichtbar, sobald das Backend (`/backend`) Produkt-Chancen mit `category = 'digital_product'` erzeugt.
 
+### Implementierungs-Notizen — Backend (2026-06-17)
+Umgesetzt:
+- **`src/lib/digital-product-research.ts`** (neu): exportiert `DIGITAL_PRODUCT_RESEARCH` — die kuratierte Sheet als gebündelte String-Konstante (Muster wie `NORA_COMPANY_CONTEXT`). Inhalt aus `docs/research/digital-product-research.md` übernommen (12 Formate + Multi-Plattform-Hinweis).
+- **`src/lib/anthropic.ts`** (erweitert): `generateProductOpportunity(liveContext)` — separater Claude-Call, der GENAU EINE Produkt-Chance liefert. Claude gibt strukturierte Felder (`format`, `price_range`, `promise`, `target_customer`, `problem`, `platforms`, `demand_evidence`, `proven_format`); daraus wird deterministisch `body` (Markdown mit allen Detailfeldern), `insight` (= Nachfrage-Beleg) und `source` (= „Belegt durch: <Format>") zusammengesetzt. Kategorie fix `digital_product`. **Best-effort:** fehlt die Sheet, fehlt der API-Key oder scheitert Claude nach 3 Versuchen → Rückgabe `null` (kein Wurf). Dedup: bereits vorgeschlagene `digital_product`-Titel aus der Historie werden im Prompt als „NICHT wiederholen" gelistet. `GeneratedSuggestion.category` auf `Category | 'digital_product'` erweitert; Haupt-`CATEGORIES` (3) unverändert, damit der Hauptlauf die 4. Kategorie nicht selbst erzeugt.
+- **`src/app/api/generate-suggestions/route.ts`** (erweitert): nach `generateSuggestions()` wird `generateProductOpportunity()` best-effort aufgerufen und (falls ≠ null) an den Batch angehängt. Da die Funktion intern nie wirft, bleibt der Tageslauf bei Fehler unberührt.
+- **`supabase/schema.sql`** (erweitert): PROJ-9-Migration erweitert die `category`-CHECK-Constraint um `'digital_product'` (idempotent: DROP IF EXISTS + ADD, gleiches Muster wie PROJ-6 `status`). **⚠️ Muss im Supabase SQL-Editor ausgeführt werden, sonst lehnt die DB den Insert der Produkt-Chance ab.**
+
+Keine neuen Pakete, keine neuen Env-Vars, keine neue Tabelle, keine neue API-Route. RLS unverändert (Produkt-Chance ist eine normale `suggestions`-Zeile).
+
+Tests: **120 grün** (`npm test`), `tsc --noEmit` exit 0.
+- `anthropic.test.ts`: +5 Tests für `generateProductOpportunity` (null ohne API-Key, zusammengesetzte Chance + Detailfelder, Sheet im Prompt, Dedup nur für `digital_product`-Historie, null nach 3 Fehlversuchen).
+- `route.test.ts`: +2 Tests (Produkt-Chance wird an Batch angehängt → count 4; best-effort null → count 3).
+
 ## QA Test Results
 _To be added by /qa_
 

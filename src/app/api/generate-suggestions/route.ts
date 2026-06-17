@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase-server'
-import { generateSuggestions } from '@/lib/anthropic'
+import { generateSuggestions, generateProductOpportunity } from '@/lib/anthropic'
 import { fetchLiveContext } from '@/lib/live-context'
 
 // Generierung kann mehrere Sekunden dauern (Claude + Retries + Notion-Fetches).
@@ -68,8 +68,16 @@ async function handleGenerate(request: NextRequest) {
   try {
     const suggestions = await generateSuggestions(liveContext)
 
+    // 3b. PROJ-9: zusätzlich genau eine Produkt-Chance (best-effort).
+    // Scheitert dieser Call, bleibt der Hauptlauf unberührt — die 4. Kategorie
+    // darf den Tageslauf nie blockieren.
+    const productOpportunity = await generateProductOpportunity(liveContext)
+    const allSuggestions = productOpportunity
+      ? [...suggestions, productOpportunity]
+      : suggestions
+
     // 4a. Erfolg: Vorschläge speichern + Report auf "sent".
-    const rows = suggestions.map(s => ({
+    const rows = allSuggestions.map(s => ({
       report_date: today,
       category: s.category,
       title: s.title,

@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server'
 
 const mockGetUser = vi.hoisted(() => vi.fn())
 const mockGenerate = vi.hoisted(() => vi.fn())
+const mockProductOpportunity = vi.hoisted(() => vi.fn())
 const mockFetchLiveContext = vi.hoisted(() => vi.fn())
 const dbConfig = vi.hoisted(() => ({ value: {} as Record<string, unknown> }))
 
@@ -15,6 +16,7 @@ vi.mock('@/lib/supabase-server', () => ({
 
 vi.mock('@/lib/anthropic', () => ({
   generateSuggestions: mockGenerate,
+  generateProductOpportunity: mockProductOpportunity,
 }))
 
 vi.mock('@/lib/live-context', () => ({
@@ -68,6 +70,7 @@ describe('POST /api/generate-suggestions', () => {
     dbConfig.value = {}
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } })
     mockGenerate.mockResolvedValue(SAMPLE)
+    mockProductOpportunity.mockResolvedValue(null)
     mockFetchLiveContext.mockResolvedValue(MOCK_LIVE_CONTEXT)
     delete process.env.CRON_SECRET
   })
@@ -129,5 +132,27 @@ describe('POST /api/generate-suggestions', () => {
     dbConfig.value = { 'suggestions.insert': { error: { message: 'insert kaputt' } } }
     const res = await POST(makeReq())
     expect(res.status).toBe(500)
+  })
+
+  it('hängt eine Produkt-Chance an den Batch an, wenn eine erzeugt wurde (PROJ-9)', async () => {
+    mockProductOpportunity.mockResolvedValue({
+      category: 'digital_product',
+      title: 'Notion-Template: Freelancer-Finanz-OS',
+      body: '**Format:** Notion-Template',
+      insight: 'Top-Creator verdienen 500–10.000 $/Monat',
+      source: 'Belegt durch: Notion Business-/Creator-OS-Template',
+    })
+    const res = await POST(makeReq())
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body.count).toBe(4)
+  })
+
+  it('läuft normal weiter, wenn keine Produkt-Chance erzeugt wurde (best-effort)', async () => {
+    mockProductOpportunity.mockResolvedValue(null)
+    const res = await POST(makeReq())
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body.count).toBe(3)
   })
 })
