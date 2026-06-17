@@ -118,6 +118,14 @@ ALTER TABLE suggestions DROP CONSTRAINT IF EXISTS suggestions_status_check;
 ALTER TABLE suggestions ADD CONSTRAINT suggestions_status_check
   CHECK (status IN ('pending', 'approved', 'rejected', 'implemented'));
 
+-- ─── PROJ-10: design-Kategorie für suggestions ─────────────
+-- Erweitert die category-CHECK-Constraint um den neuen Wert 'design'.
+-- Idempotent: DROP IF EXISTS + ADD CONSTRAINT (Muster wie PROJ-6 beim status).
+-- Der vorhandene idx_suggestions_category bleibt unverändert gültig.
+ALTER TABLE suggestions DROP CONSTRAINT IF EXISTS suggestions_category_check;
+ALTER TABLE suggestions ADD CONSTRAINT suggestions_category_check
+  CHECK (category IN ('marketing', 'product', 'operations', 'design'));
+
 -- ─── PROJ-4: app_config ─────────────────────────────────────
 -- Key-Value-Store für Laufzeitkonfiguration (z.B. monday_board_id).
 CREATE TABLE IF NOT EXISTS app_config (

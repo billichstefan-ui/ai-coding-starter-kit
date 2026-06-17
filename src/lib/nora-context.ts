@@ -37,14 +37,20 @@ drastisch zu beschleunigen (z. B. Validierungsdokumentation, Compliance-Nachweis
 Intelligent, Vertrauenswürdig (höchste Qualität & GMP-Konformität), Innovativ,
 Vernetzt, Zukunftsorientiert, Impact (Mehrwert für Gesundheit & Gesellschaft).
 
-## Visuelle Identität (Neon-Graffiti, seit 2026-06)
-KIcasso tritt visuell als mutige Neon-Graffiti-/Street-Art-Marke auf:
-- Palette: Neon-Cyan #38E5FF, Hot-Pink/Magenta #FF2D9C, Neon-Lime #A6FF3C auf dunkler,
-  rissiger Wand (#070B1E / #12101C) — mit Glow, Farbspritzern und tropfender Farbe (Drip).
+## Visuelle Identität & Brand Guide (Neon-Graffiti, seit 2026-06)
+KIcasso tritt visuell als mutige Neon-Graffiti-/Street-Art-Marke auf — dies ist die
+Grundlage für Vorschläge der Kategorie "design" (Design & Brand):
+- Typografie: Sora (Google Fonts, modern-geometrisch) als UI-Font; Fallback Segoe UI → Arial.
+  Wortmarke „KI" (Cyan) + „casso" (Pink) im Graffiti-Drip-Stil.
+- Palette: Neon-Cyan #38E5FF (Primär-Akzent), Hot-Pink/Magenta #FF2D9C (Sekundär),
+  Neon-Lime #A6FF3C (Tertiär), Electric Blue #0078FF (Buttons/Links). Hintergründe:
+  Navy #070B1E, Wall-Charcoal #12101C, Surface #0E1430; Text #FFFFFF.
+- Signature-Look: Neon-Glow (Text/Outline + gleichfarbiger Schatten), Gradient Cyan→Violet,
+  Farbspritzer und tropfende Farbe (Drip) auf dunkler, rissiger Wand → Dark-Premium-Ästhetik.
 - Maskottchen: Neon-Cyborg-Kopf (Cyan-Outline, Antenne, Kamera-Blenden-Auge, neon-grüner
-  Wackelmund, tropfende Farbe). Wortmarke: „KI" (Cyan) + „casso" (Pink), Graffiti-Drip.
+  Wackelmund, tropfende Farbe).
 - Vibe: kreativ, verspielt, energetisch — visuell auffällig, während die fachliche
-  Tonalität (Pharma/GMP) seriös bleibt. Details: docs/design-system.md.
+  Tonalität (Pharma/GMP) seriös bleibt. Vollständige Specs: docs/design-system.md.
 
 ## Aktuelle Geschäftsziele (BizDev-Fokus)
 1. Sichtbarkeit & Thought Leadership im Pharma/GMP-Umfeld aufbauen (v. a. LinkedIn)

@@ -83,19 +83,20 @@ describe('monday.ts — API Client', () => {
   })
 
   describe('createNoraBizDevBoard', () => {
-    it('erstellt Board und alle drei Gruppen', async () => {
+    it('erstellt Board und alle vier Gruppen', async () => {
       const spy = vi.spyOn(global, 'fetch')
         .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ data: { create_board: { id: TEST_BOARD_ID } } }) } as Response)
         .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ data: { create_group: { id: 'g1', title: 'Marketing' } } }) } as Response)
         .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ data: { create_group: { id: 'g2', title: 'Produkt' } } }) } as Response)
         .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ data: { create_group: { id: 'g3', title: 'Operations' } } }) } as Response)
+        .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ data: { create_group: { id: 'g4', title: 'Design & Brand' } } }) } as Response)
 
       const result = await createNoraBizDevBoard(TEST_KEY)
       expect(result.id).toBe(TEST_BOARD_ID)
-      expect(result.groups).toHaveLength(3)
-      expect(result.groups.map(g => g.title)).toEqual(['Marketing', 'Produkt', 'Operations'])
-      // 1 board creation + 3 group creations = 4 API calls
-      expect(spy).toHaveBeenCalledTimes(4)
+      expect(result.groups).toHaveLength(4)
+      expect(result.groups.map(g => g.title)).toEqual(['Marketing', 'Produkt', 'Operations', 'Design & Brand'])
+      // 1 board creation + 4 group creations = 5 API calls
+      expect(spy).toHaveBeenCalledTimes(5)
     })
   })
 
@@ -132,10 +133,11 @@ describe('monday.ts — API Client', () => {
       expect(body.variables.name).toBe('Operations')
     })
 
-    it('kennt alle drei Kategorien aus CATEGORY_TO_GROUP', () => {
+    it('kennt alle vier Kategorien aus CATEGORY_TO_GROUP', () => {
       expect(CATEGORY_TO_GROUP['marketing']).toBe('Marketing')
       expect(CATEGORY_TO_GROUP['product']).toBe('Produkt')
       expect(CATEGORY_TO_GROUP['operations']).toBe('Operations')
+      expect(CATEGORY_TO_GROUP['design']).toBe('Design & Brand')
     })
   })
 

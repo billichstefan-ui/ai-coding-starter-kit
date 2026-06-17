@@ -90,6 +90,15 @@ describe('elaborateDocument', () => {
     expect(prompt).toContain('Nächste Aktion')
   })
 
+  it('enthält "Erfolgskriterium" + Brand Guide im Prompt für Design-Kategorie', async () => {
+    process.env.ANTHROPIC_API_KEY = 'test-key'
+    mockSuccess()
+    await elaborateDocument({ title: 'T', body: 'B', insight: null, source: null, category: 'design' })
+    const prompt = mockParse.mock.calls[0][0].messages[0].content as string
+    expect(prompt).toContain('Erfolgskriterium')
+    expect(prompt).toContain('Brand Guide')
+  })
+
   it('enthält Titel und Body im Prompt', async () => {
     process.env.ANTHROPIC_API_KEY = 'test-key'
     mockSuccess()
@@ -222,5 +231,15 @@ describe('generateSuggestions', () => {
     expect(implementedIndex).toBeGreaterThan(-1)
     expect(approvedIndex).toBeGreaterThan(-1)
     expect(implementedIndex).toBeLessThan(approvedIndex)
+  })
+
+  it('nennt die design-Kategorie und konkrete Markenelemente im Prompt', async () => {
+    process.env.ANTHROPIC_API_KEY = 'test-key'
+    mockParse.mockResolvedValue({ parsed_output: { suggestions: [{ category: 'design', title: 'T', body: 'B', insight: 'I', source: 'S' }] } })
+    await generateSuggestions(EMPTY_LIVE_CONTEXT)
+    const prompt = mockParse.mock.calls[0][0].messages[0].content as string
+    expect(prompt).toContain('design')
+    expect(prompt).toContain('Sora')
+    expect(prompt).toContain('#0078FF')
   })
 })

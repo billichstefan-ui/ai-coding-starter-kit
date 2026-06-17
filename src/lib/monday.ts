@@ -5,6 +5,7 @@ export const CATEGORY_TO_GROUP: Record<string, string> = {
   marketing: 'Marketing',
   product: 'Produkt',
   operations: 'Operations',
+  design: 'Design & Brand',
 }
 
 export type MondayGroup = { id: string; title: string }

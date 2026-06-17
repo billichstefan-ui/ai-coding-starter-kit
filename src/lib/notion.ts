@@ -6,6 +6,7 @@ export const CATEGORY_TO_NOTION: Record<string, string> = {
   marketing: 'Marketing',
   product: 'Produkt',
   operations: 'Operations',
+  design: 'Design & Brand',
 }
 
 /**
@@ -78,6 +79,7 @@ export async function createNoraBizDevDatabase(
             { name: 'Marketing', color: 'blue' },
             { name: 'Produkt', color: 'green' },
             { name: 'Operations', color: 'orange' },
+            { name: 'Design & Brand', color: 'purple' },
           ],
         },
       },

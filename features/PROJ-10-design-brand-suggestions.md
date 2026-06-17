@@ -63,7 +63,7 @@
 ## Open Questions
 - [x] Ist `suggestions.category` ein DB-CHECK/Enum (Migration nötig)? → **Ja**, CHECK-Constraint `('marketing','product','operations')` auf `suggestions.category`. Erweiterung per idempotentem DROP/ADD CONSTRAINT (gleiches Muster wie PROJ-6 beim `status`-Feld). (`/architecture` 2026-06-16)
 - [x] Konkrete Badge-Farbe für „Design & Brand" → **Violett `#A720FF`** (nach dem Neon-Reskin 2026-06-16: Operations ist jetzt Pink `#FF2D9C`, Teal `#0E9594` wird vom „Umgesetzt"-Status belegt → Violett ist frei und passt in die Neon-Palette). Final bestätigt in `/frontend`. (`/architecture`, akt. 2026-06-16)
-- [ ] Muss die Notion-„Kategorie"-Select-Property die Option „Design & Brand" explizit erhalten, oder legt Notion sie beim ersten Schreiben automatisch an? → in `/backend` verifizieren.
+- [x] Muss die Notion-„Kategorie"-Select-Property die Option „Design & Brand" explizit erhalten, oder legt Notion sie beim ersten Schreiben automatisch an? → **Beides abgedeckt:** Option ist jetzt explizit in `createNoraBizDevDatabase` (Farbe `purple`) für neu angelegte DBs; bei bestehenden DBs legt Notion die Select-Option beim ersten `createPage`-Schreiben automatisch an. (`/backend` 2026-06-17)
 
 ## Decision Log
 
@@ -183,6 +183,38 @@ Das `z.enum` erlaubt jetzt `design`, aber NORA generiert noch keine Design-Vorsc
 ### Hinweis (nicht durch dieses Feature verursacht)
 `npm run lint` schlägt repo-weit fehl (`next lint` wurde in Next 16 entfernt) — Pre-existing,
 sollte separat auf ESLint-CLI/`eslint .` umgestellt werden.
+
+## Implementation Notes (Backend)
+
+**Implemented:** 2026-06-17 · `/backend`
+
+### Was gebaut wurde
+- **Generierung (`src/lib/anthropic.ts`):** `buildPrompt` auf vier Kategorien (inkl.
+  `design`) umgestellt — flexible Verteilung ohne feste Quote (Design optional pro Tag),
+  plus eine Design-Anleitung, die konkrete Markenelemente erzwingt (Sora, Neon-Palette,
+  Electric Blue #0078FF, Gradient Cyan→Violet, Navy #070B1E, Dark-Premium). Neuer
+  `design`-Eintrag in `CATEGORY_PROMPTS` für die Notion-Ausarbeitung (PROJ-8):
+  Ausgangslage → Markenkonforme Lösung → Umsetzungsschritte → Erfolgskriterium.
+- **Wissensbasis (`src/lib/nora-context.ts`):** Abschnitt „Visuelle Identität & Brand
+  Guide" um Sora-Typografie, vollständige Palette inkl. #0078FF, Gradient Cyan→Violet,
+  Hintergründe (Navy/Charcoal/Surface) und Dark-Premium ergänzt → deckt AC „referenziert
+  konkrete Markenelemente" ab.
+- **DB (`supabase/schema.sql`):** category-CHECK-Constraint idempotent per DROP/ADD um
+  `design` erweitert (Muster wie PROJ-6 beim status); `idx_suggestions_category` bleibt
+  gültig.
+- **Umsetzung:** `design → „Design & Brand"` in `CATEGORY_TO_GROUP` (Monday) und
+  `CATEGORY_TO_NOTION` (Notion); Notion-DB-Schema um Select-Option „Design & Brand"
+  (`purple`) ergänzt. Pipeline sonst unverändert (kein Sondermapping): `ensureGroup` legt
+  die Monday-Gruppe bei Bedarf an, `createPage` taggt das Dokument.
+
+### Verifikation
+- `vitest run`: **124/124 grün** (Monday: 4 Gruppen/5 Calls; Notion: 4 Select-Optionen;
+  neue Tests für Design-Generierungs- und -Ausarbeitungs-Prompt). `next build`: **grün**.
+
+### Offene Aktion vor Produktivbetrieb
+- ⚠️ `supabase/schema.sql` einmal im Supabase SQL-Editor ausführen, damit der erweiterte
+  category-CHECK-Constraint greift (idempotent, gefahrlos). Erst danach lassen sich
+  `design`-Vorschläge persistieren.
 
 ## QA Test Results
 _To be added by /qa_

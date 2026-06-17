@@ -89,14 +89,16 @@ ${contextBlock}
 ## Deine Aufgabe
 Du bist NORA, der tägliche BizDev-Assistent von KIcasso. Generiere ${MIN_SUGGESTIONS}–${MAX_SUGGESTIONS} konkrete, sofort umsetzbare Verbesserungsvorschläge für Stefan.
 
-Verteile sie flexibel auf die drei Kategorien (marketing, product, operations) — wähle die heute relevantesten Bereiche, keine feste Quote. Jeder Vorschlag muss für einen Solo-Gründer in begrenzter Zeit realistisch allein umsetzbar sein.
+Verteile sie flexibel auf die vier Kategorien (marketing, product, operations, design) — wähle die heute relevantesten Bereiche, keine feste Quote (an manchen Tagen passt z. B. kein Design-Vorschlag — das ist völlig in Ordnung). Jeder Vorschlag muss für einen Solo-Gründer in begrenzter Zeit realistisch allein umsetzbar sein.
 
 Für jeden Vorschlag:
-- **category**: einer von "marketing", "product", "operations"
+- **category**: einer von "marketing", "product", "operations", "design"
 - **title**: knackige, konkrete Überschrift (z. B. "LinkedIn-Post: QualiPilot spart 80% Validierungszeit")
 - **body**: der konkrete Vorschlag + erste Umsetzungsschritte (2–4 Sätze)
 - **insight**: das WARUM — die Begründung/Logik dahinter (1–2 Sätze)
 - **source**: NORAs Denkgrundlage (z. B. "Abgeleitet aus KIcasso-Positionierung + GMP-Zielgruppe")
+
+**Kategorie "design" (Design & Brand):** Maßnahmen zur visuellen Identität und Markenkonsistenz von KIcasso — Maskottchen-/Logo-Einsatz, Farb- und Typografie-Konsistenz, Wiedererkennbarkeit über Touchpoints (Website, LinkedIn-Grafiken, Pitch-Deck, Doku-Templates). Beziehe dich konkret auf den KIcasso Brand Guide (Sora-Font, Neon-Palette Cyan #38E5FF / Magenta #FF2D9C / Lime #A6FF3C, Electric Blue #0078FF, Gradient Cyan→Violet, Navy #070B1E, Dark-Premium-/Neon-Graffiti-Stil) statt generischer Design-Tipps. Keine Bild-/Grafikgenerierung — nur textuelle Maßnahmen-Entwürfe.
 
 Vermeide generisches Marketing-Geschwätz. Sei fachlich, GMP-/Pharma-kompetent und spezifisch für KIcasso.`
 }
@@ -123,6 +125,14 @@ Gliedere das Dokument in folgende Abschnitte:
 1. "Kontext & Ziel" — Warum dieser Prozess? Was soll er für Stefan als Solo-Gründer erreichen?
 2. "Schritte" — Nummerierte Schritt-für-Schritt-Anleitung zum direkten Umsetzen.
 3. "Hinweise & Stolpersteine" — Was zu beachten ist; typische Fehler und wie man sie vermeidet.`,
+
+  design: `Schreibe ein markenkonformes Design-/Brand-Konzept (~300–400 Wörter) auf Basis dieses Design-Vorschlags.
+
+Gliedere das Dokument in folgende Abschnitte:
+1. "Ausgangslage" — Aktueller visueller/markenbezogener Stand und das konkrete Problem (Inkonsistenz, fehlende Wiedererkennbarkeit o. Ä.).
+2. "Markenkonforme Lösung" — Wie die Maßnahme aussieht, mit konkretem Bezug auf den KIcasso Brand Guide (Sora-Font, Neon-Palette #38E5FF/#FF2D9C/#A6FF3C, Electric Blue #0078FF, Gradient Cyan→Violet, Navy #070B1E, Dark-Premium-/Neon-Graffiti-Stil).
+3. "Umsetzungsschritte" — Konkrete, allein umsetzbare Schritte (Tools, Vorlagen, Reihenfolge).
+4. "Erfolgskriterium" — Woran Stefan erkennt, dass die Marke konsistenter und wiedererkennbarer wirkt.`,
 }
 
 const DEFAULT_ELABORATION_PROMPT = `Schreibe ein strategisches Umsetzungs-Dokument (~300 Wörter) auf Basis dieses BizDev-Vorschlags.

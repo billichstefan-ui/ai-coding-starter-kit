@@ -140,7 +140,7 @@ describe('notion.ts — API Client', () => {
       expect(body.properties).toHaveProperty('Monday-Task-Link')
     })
 
-    it('enthält alle drei Kategorie-Optionen', async () => {
+    it('enthält alle vier Kategorie-Optionen', async () => {
       const spy = mockFetch({ id: TEST_DB_ID })
       await createNoraBizDevDatabase(TEST_KEY, TEST_PARENT_ID)
       const body = JSON.parse(spy.mock.calls[0][1]?.body as string)
@@ -148,6 +148,7 @@ describe('notion.ts — API Client', () => {
       expect(options).toContain('Marketing')
       expect(options).toContain('Produkt')
       expect(options).toContain('Operations')
+      expect(options).toContain('Design & Brand')
     })
 
     it('wirft bei HTTP 403', async () => {
@@ -186,10 +187,11 @@ describe('notion.ts — API Client', () => {
       expect(body.properties.Kategorie).toEqual({ select: { name: 'Marketing' } })
     })
 
-    it('mappt alle drei Kategorien korrekt', async () => {
+    it('mappt alle vier Kategorien korrekt', async () => {
       expect(CATEGORY_TO_NOTION['marketing']).toBe('Marketing')
       expect(CATEGORY_TO_NOTION['product']).toBe('Produkt')
       expect(CATEGORY_TO_NOTION['operations']).toBe('Operations')
+      expect(CATEGORY_TO_NOTION['design']).toBe('Design & Brand')
     })
 
     it('setzt Datum auf heutiges Datum', async () => {
