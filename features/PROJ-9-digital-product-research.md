@@ -207,7 +207,12 @@ Tests: **120 grün** (`npm test`), `tsc --noEmit` exit 0.
 
 **QA Engineer:** Claude Code
 **Date:** 2026-06-17
-**Status: IN REVIEW — 2 Medium-Bugs (kein Critical/High)**
+**Status: APPROVED — beide Medium-Bugs gefixt & nachgetestet (Re-QA 2026-06-17)**
+
+### Re-QA nach Fixes (2026-06-17)
+Beide Medium-Bugs wurden behoben und verifiziert (`tsc` exit 0, **121 Unit-Tests grün**):
+- **BUG-1 gefixt:** `generateProductOpportunity()` baut den `body` jetzt mit Klartext-Labels (kein `**`-Markdown); `suggestion-card.tsx` rendert den body mit `whitespace-pre-line`, sodass die Detailfelder sauber zeilenweise erscheinen. → AC-2 jetzt auch visuell sauber.
+- **BUG-2 gefixt:** Die Produkt-Chance wird in `route.ts` in einem **separaten** Insert nach dem Kern-Batch gespeichert; schlägt er fehl (z.B. fehlende Migration), bleibt der Kern-Batch gespeichert und der Tageslauf erfolgreich. Neuer Regressions-Test deckt das ab (`route.test.ts`: „rettet den Kern-Batch …" → count 3, success). Die Migrations-Voraussetzung bleibt für die Sichtbarkeit der Chance bestehen, ist aber nicht mehr laufgefährdend.
 
 ### Test-Zusammenfassung
 | Kategorie | Wert |
@@ -282,11 +287,9 @@ Der Next-Dev-Server bootet in dieser Umgebung nicht (keine `NEXT_PUBLIC_SUPABASE
 - ⚠️ Regressions-Risiko nur via BUG-2 (siehe oben), falls Migration nicht angewendet.
 
 ### Production-Ready-Einschätzung
-**Kein Critical-, kein High-Bug.** Formal deploy-fähig, ABER:
-1. **BUG-2-Migration ist Pflicht** vor Deploy (sonst Regression auf den Tageslauf).
-2. **BUG-1 (Rendering)** sollte vor Deploy gefixt werden — betrifft die Kern-UX der neuen Karte direkt.
+**APPROVED — kein Critical-, kein High-, keine offenen Medium-Bugs.** Beide Medium-Bugs (BUG-1 Rendering, BUG-2 Insert-Isolation) sind gefixt und durch Tests abgesichert (121 grün, `tsc` exit 0).
 
-Empfehlung: BUG-1 (Frontend) + optional BUG-2-Härtung (separater Insert) beheben, dann erneut `/qa`-Kurzcheck → Approved.
+**Verbleibende Deploy-Voraussetzung:** `supabase/schema.sql` (idempotent) im Supabase SQL-Editor ausführen, damit `category = 'digital_product'`-Zeilen akzeptiert werden — die Produkt-Chance erscheint sonst nicht (aber der Kern-Tageslauf läuft dank BUG-2-Fix unabhängig weiter).
 
 ## Deployment
 _To be added by /deploy_

@@ -34,7 +34,12 @@ function buildDb(config: Record<string, unknown>) {
         order: () => builder,
         limit: () => Promise.resolve(config[`${table}.list`] ?? { data: [] }),
         maybeSingle: () => Promise.resolve(config[`${table}.single`] ?? { data: null }),
-        insert: () => Promise.resolve(config[`${table}.insert`] ?? { error: null }),
+        insert: () => {
+          // Array → pro Aufruf das nächste Ergebnis (für getrennte Inserts: Kern + Produkt-Chance).
+          const v = config[`${table}.insert`]
+          if (Array.isArray(v)) return Promise.resolve(v.shift() ?? { error: null })
+          return Promise.resolve(v ?? { error: null })
+        },
         upsert: () => Promise.resolve(config[`${table}.upsert`] ?? { error: null }),
       }
       return builder
@@ -153,6 +158,26 @@ describe('POST /api/generate-suggestions', () => {
     const res = await POST(makeReq())
     const body = await res.json()
     expect(res.status).toBe(200)
+    expect(body.count).toBe(3)
+  })
+
+  it('rettet den Kern-Batch, wenn der separate Produkt-Chance-Insert fehlschlägt (BUG-2)', async () => {
+    // Kern-Insert ok (1. Aufruf), Produkt-Chance-Insert abgelehnt (2. Aufruf)
+    dbConfig.value = {
+      'suggestions.insert': [{ error: null }, { error: { message: 'category constraint' } }],
+    }
+    mockProductOpportunity.mockResolvedValue({
+      category: 'digital_product',
+      title: 'PC',
+      body: 'Format: X',
+      insight: 'I',
+      source: 'Belegt durch: Y',
+    })
+    const res = await POST(makeReq())
+    const body = await res.json()
+    // Tageslauf erfolgreich, Produkt-Chance fällt still weg → count bleibt 3
+    expect(res.status).toBe(200)
+    expect(body.success).toBe(true)
     expect(body.count).toBe(3)
   })
 })

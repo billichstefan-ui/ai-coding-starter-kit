@@ -354,13 +354,16 @@ export async function generateProductOpportunity(
         throw new Error('Claude lieferte keine verwertbare Produkt-Chance.')
       }
 
+      // Klartext-Labels (kein Markdown): die Dashboard-Card rendert den body als
+      // reinen Text mit whitespace-pre-line — Zeilenumbrüche bleiben, ** würde
+      // literal erscheinen.
       const body = [
-        `**Format:** ${p.format}`,
-        `**Preisrahmen:** ${p.price_range}`,
-        `**Versprechen:** ${p.promise}`,
-        `**Zielgruppe:** ${p.target_customer}`,
-        `**Gelöstes Problem:** ${p.problem}`,
-        `**Verkaufsplattformen:** ${p.platforms}`,
+        `Format: ${p.format}`,
+        `Preisrahmen: ${p.price_range}`,
+        `Versprechen: ${p.promise}`,
+        `Zielgruppe: ${p.target_customer}`,
+        `Gelöstes Problem: ${p.problem}`,
+        `Verkaufsplattformen: ${p.platforms}`,
       ].join('\n')
 
       return {

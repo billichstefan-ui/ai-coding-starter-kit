@@ -87,7 +87,7 @@ export function SuggestionCard({ suggestion, onAction }: SuggestionCardProps) {
         {/* Body */}
         <div>
           <p
-            className={`text-sm leading-relaxed ${!isBodyExpanded ? 'line-clamp-3' : ''}`}
+            className={`text-sm leading-relaxed whitespace-pre-line ${!isBodyExpanded ? 'line-clamp-3' : ''}`}
             style={{ color: '#8892B0' }}
           >
             {suggestion.body}
