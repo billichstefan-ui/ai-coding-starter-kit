@@ -178,6 +178,18 @@ Einzige DB-Änderung: category-CHECK-Constraint erlaubt zusätzlich 'digital_pro
 ### Env-Vars
 **Keine neuen Env-Vars.** Nutzt `ANTHROPIC_API_KEY` und die bestehende Supabase-Verbindung.
 
+### Implementierungs-Notizen — Frontend (2026-06-17)
+Status: **In Progress** (Frontend fertig, Backend offen).
+
+Umgesetzt — reine Konfigurations-Erweiterungen, kein neues UI-Bauteil (Card-Layout unverändert):
+- `suggestion-card.tsx`: Kategorie-Union um `'digital_product'` erweitert; `CATEGORY_CONFIG` Eintrag `digital_product → { label: 'Produkt-Chance', color: '#7B81FF' }`.
+- `history-view.tsx`: gleicher `CATEGORY_CONFIG`-Eintrag, damit die Kategorie auch im Verlauf korrekt mit Label/Farbe erscheint.
+- `dashboard-client.tsx`: `'digital_product'` zu `CATEGORY_ORDER` hinzugefügt (sonst filtert die Gruppenansicht die Kategorie heraus) + Label in `CATEGORY_LABELS`.
+
+Farbwahl: **Indigo/Periwinkle `#7B81FF`** aus dem Design-System (`docs/design-system.md`) — bislang von keiner anderen Kategorie genutzt und distinkt zu den Status-Farben (grün/teal/grau).
+
+Verifikation: `npx tsc --noEmit` läuft sauber durch (exit 0). Die neue Kategorie rendert über denselben Card-/Gruppen-Pfad wie die drei bestehenden Kategorien; sie wird sichtbar, sobald das Backend (`/backend`) Produkt-Chancen mit `category = 'digital_product'` erzeugt.
+
 ## QA Test Results
 _To be added by /qa_
 
