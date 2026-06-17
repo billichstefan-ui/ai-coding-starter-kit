@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Rocket, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import type { Suggestion } from './suggestion-card'
+import { categoryMeta } from '@/lib/categories'
 
 type StatusFilter = 'all' | 'implemented' | 'approved' | 'rejected' | 'pending'
 
@@ -30,12 +31,6 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
     color: '#8892B0',
     icon: <Clock className="w-3 h-3" aria-hidden="true" />,
   },
-}
-
-const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  marketing: { label: 'Marketing', color: '#38E5FF' },
-  product: { label: 'Produkt', color: '#0078FF' },
-  operations: { label: 'Operations', color: '#FF2D9C' },
 }
 
 const FILTER_OPTIONS: { value: StatusFilter; label: string }[] = [
@@ -140,7 +135,7 @@ function HistoryCard({
 }) {
   const [isLoading, setIsLoading] = useState(false)
   const status = STATUS_CONFIG[suggestion.status] ?? STATUS_CONFIG.pending
-  const category = CATEGORY_CONFIG[suggestion.category] ?? { label: suggestion.category, color: '#8892B0' }
+  const category = categoryMeta(suggestion.category)
 
   async function handleImplement() {
     if (!onAction) return

@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { NORA_COMPANY_CONTEXT } from './nora-context'
 import { type ElaboratedSection } from './notion'
 import { type LiveContext } from './live-context'
+import { CATEGORIES, type Category } from './categories'
 
 // NORA nutzt Opus 4.8 — höchste strategische Qualität, 1 Lauf/Tag.
 const MODEL = 'claude-opus-4-8'
@@ -11,8 +12,9 @@ const MAX_RETRIES = 3
 const MIN_SUGGESTIONS = 3
 const MAX_SUGGESTIONS = 5
 
-export const CATEGORIES = ['marketing', 'product', 'operations'] as const
-export type Category = (typeof CATEGORIES)[number]
+// Kategorie-Liste & Typ leben zentral in ./categories (Single Source of Truth) und
+// werden hier für das KI-Output-Schema (z.enum) genutzt + für Bestandsimporte re-exportiert.
+export { CATEGORIES, type Category }
 
 export type GeneratedSuggestion = {
   category: Category

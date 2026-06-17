@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { CheckCircle2, XCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { categoryMeta, type Category } from '@/lib/categories'
 
 export type Suggestion = {
   id: string
@@ -13,15 +14,9 @@ export type Suggestion = {
   body: string
   insight: string | null
   source: string | null
-  category: 'marketing' | 'product' | 'operations'
+  category: Category
   status: 'pending' | 'approved' | 'rejected' | 'implemented'
   report_date: string
-}
-
-const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  marketing: { label: 'Marketing', color: '#38E5FF' },
-  product: { label: 'Produkt', color: '#0078FF' },
-  operations: { label: 'Operations', color: '#FF2D9C' },
 }
 
 type SuggestionCardProps = {
@@ -34,7 +29,7 @@ export function SuggestionCard({ suggestion, onAction }: SuggestionCardProps) {
   const [isBodyExpanded, setIsBodyExpanded] = useState(false)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
 
-  const category = CATEGORY_CONFIG[suggestion.category] ?? { label: suggestion.category, color: '#8892B0' }
+  const category = categoryMeta(suggestion.category)
   const today = new Date().toISOString().split('T')[0]
   const showDate = suggestion.report_date !== today
   const hasDetails = suggestion.insight || suggestion.source

@@ -8,13 +8,7 @@ import { SuggestionCard } from './suggestion-card'
 import { StatsBar } from './stats-bar'
 import { HistoryView } from './history-view'
 import type { Suggestion } from './suggestion-card'
-
-const CATEGORY_ORDER = ['marketing', 'product', 'operations'] as const
-const CATEGORY_LABELS: Record<string, string> = {
-  marketing: 'Marketing',
-  product: 'Produkt',
-  operations: 'Operations',
-}
+import { CATEGORY_ORDER, categoryMeta } from '@/lib/categories'
 
 type DashboardClientProps = {
   initialSuggestions: Suggestion[]
@@ -76,7 +70,7 @@ export function DashboardClient({ initialSuggestions, allTimeCounts }: Dashboard
   const grouped = CATEGORY_ORDER
     .map(cat => ({
       category: cat,
-      label: CATEGORY_LABELS[cat],
+      label: categoryMeta(cat).label,
       items: visibleSuggestions.filter(s => s.category === cat),
     }))
     .filter(g => g.items.length > 0)
