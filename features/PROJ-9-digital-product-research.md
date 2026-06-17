@@ -65,8 +65,8 @@ Die Produkt-Chancen sind **breit / nischenoffen**: jedes marktbewährte digitale
 - Keine neuen Env-Vars erwartet (Entscheidung final in `/architecture`).
 
 ## Open Questions
-- [ ] Wo lebt die „kanonische" Research-Sheet, die NORA liest — die Repo-Datei `docs/research/digital-product-research.md`, oder eine gespiegelte Notion-Seite (analog Living Spec), damit Stefan sie ohne Commit pflegen kann? → entscheidet `/architecture`
-- [ ] Werden die Produkt-Chance-Detailfelder (Preis, Plattformen etc.) als strukturierte Spalten gespeichert oder im bestehenden `description`-Feld als formatierter Text? → entscheidet `/architecture`
+- [x] Wo lebt die „kanonische" Research-Sheet, die NORA liest? → **Als gebündelte TS-Konstante im App-Build** (analog `NORA_COMPANY_CONTEXT`). Die menschenlesbare Quelle bleibt `docs/research/digital-product-research.md`; daraus wird der String-Inhalt in ein Modul `digital-product-research.ts` übernommen. Garantiert verfügbar in der Vercel-Serverless-Umgebung, kein Notion-Roundtrip, kein Laufzeit-Dateizugriff. Stefan pflegt die Sheet per Commit/Redeploy (oder via Claude Code). Keine gespiegelte Notion-Seite im MVP. (Architecture 2026-06-17)
+- [x] Strukturierte Spalten oder bestehendes Textfeld für die Detailfelder? → **Bestehende Spalten wiederverwenden, keine neuen Spalten.** Die Detailfelder (Format, Preisrahmen, Versprechen, Zielgruppe, Problem, Plattformen) werden als strukturierter Markdown-Text ins `body`-Feld gepackt; `insight` = Nachfrage-Begründung; `source` = belegendes Format aus der Sheet. So bleibt das Dashboard-Card-Rendering unverändert. (Architecture 2026-06-17)
 
 ## Decision Log
 
@@ -85,13 +85,98 @@ Die Produkt-Chancen sind **breit / nischenoffen**: jedes marktbewährte digitale
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
-| _To be added by /architecture_ | | |
+| Eigene 4. Kategorie `digital_product` (Label „Produkt-Chance") statt Wiederverwendung von `product` | Klare Trennung von QualiPilot-Produktentwicklung; eigene Filterung/Farbe im Dashboard; eindeutige Dedup-Historie | 2026-06-17 |
+| Separater Claude-Call `generateProductOpportunity()` statt Erweiterung von `generateSuggestions()` | Isolierte Fehlerbehandlung (best-effort): scheitert der Call, bleibt der Haupt-Batch unberührt; unverändertes Haupt-Schema; eigener, fokussierter Prompt mit Research-Sheet | 2026-06-17 |
+| Research-Sheet als gebündelte TS-Konstante (`digital-product-research.ts`), nicht per FS-Read oder Notion | Garantierte Verfügbarkeit im Serverless-Bundle; konsistent mit `NORA_COMPANY_CONTEXT`; kein Laufzeit-Dateizugriff, keine neue externe Abhängigkeit | 2026-06-17 |
+| Detailfelder in bestehendes `body` (Markdown) packen, keine neuen Spalten | Dashboard-Card rendert `body` unverändert; minimale DB-Änderung; AC-Sichtbarkeit voll erfüllt | 2026-06-17 |
+| Kleine Migration: `category`-CHECK-Constraint um `digital_product` erweitern | Gleiches Muster wie PROJ-6 (`status`-Constraint); ohne Erweiterung lehnt die DB den Insert ab | 2026-06-17 |
+| Dedup über bestehende PROJ-7-Historie, kein neuer Mechanismus | Produkt-Chancen landen mit ihrer Kategorie in `suggestions` und fließen automatisch in den Dedup-Kontext des Prompts | 2026-06-17 |
+| `CATEGORY_ORDER` + Label/Farbe im Dashboard um `digital_product` erweitern | Hardcodierte Reihenfolge filtert unbekannte Kategorien sonst aus der Gruppenansicht heraus | 2026-06-17 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### Überblick
+Eine **vierte Vorschlagskategorie** `digital_product` wird in den bestehenden täglichen Lauf eingehängt. Statt das Haupt-Generierungs-Schema anzufassen, erzeugt ein **separater, best-effort Claude-Call** genau eine Produkt-Chance, gegroundet in der gebündelten Research-Sheet. Das Ergebnis wird wie jeder andere Vorschlag in `suggestions` gespeichert und durchläuft Dashboard, Approval und Monday/Notion-Handoff ohne Sonderpfad.
+
+### Datenfluss
+
+```
+Vercel Cron / Dashboard-Button
+        ↓
+GET/POST /api/generate-suggestions            (bestehend — PROJ-2)
+        ↓
+fetchLiveContext(db)                          (bestehend — PROJ-7)
+        ↓
+generateSuggestions(liveContext)              (bestehend) → 3–5 Vorschläge (marketing/product/operations)
+        ↓
+generateProductOpportunity(liveContext)       (NEU, best-effort)
+    ├── liest gebündelte Research-Sheet (DIGITAL_PRODUCT_RESEARCH-Konstante)
+    ├── nutzt liveContext-Historie zur Deduplizierung (keine Wiederholung)
+    └── try/catch → scheitert still, gibt null zurück (kein Abbruch des Laufs)
+        ↓
+[Haupt-Vorschläge] + [0 oder 1 Produkt-Chance]  → zusammenführen
+        ↓
+Insert → Supabase `suggestions` (category = 'digital_product' für die Chance)
+        ↓
+Dashboard (PROJ-3) zeigt sie als 4. Gruppe „Produkt-Chance"
+        ↓
+Bestätigung → Monday-Task (PROJ-4) + Notion-Ausarbeitung (PROJ-5/8)  [unverändert]
+```
+
+### Komponenten-/Modul-Struktur
+
+```
+Generierung (Backend)
+├── src/lib/digital-product-research.ts   NEU — exportiert die kuratierte Sheet als String-Konstante
+├── src/lib/anthropic.ts                  ERWEITERT — generateProductOpportunity() + Prompt
+├── src/app/api/generate-suggestions/route.ts  ERWEITERT — ruft den neuen Call best-effort auf, merged Ergebnis
+└── supabase/schema.sql                   ERWEITERT — category-CHECK-Constraint um 'digital_product'
+
+Dashboard (Frontend)
+├── dashboard-client.tsx   ERWEITERT — 'digital_product' zu CATEGORY_ORDER + Label „Produkt-Chance"
+├── suggestion-card.tsx    ERWEITERT — Kategorie-Typ + CATEGORY_CONFIG (Label/Farbe)
+└── history-view.tsx       ERWEITERT — CATEGORY_CONFIG (Label/Farbe)
+        (Card-Layout selbst unverändert — rendert title/body/insight wie gehabt)
+```
+
+### Datenmodell (Klartext)
+Keine neue Tabelle, keine neue Spalte. Eine Produkt-Chance ist eine ganz normale Zeile in `suggestions`:
+
+```
+Eine Produkt-Chance (Zeile in `suggestions`):
+- category : "digital_product"   (neuer erlaubter Wert)
+- title    : Name der Produkt-Chance (z. B. „Notion-Template: Freelancer-Finanz-OS")
+- body     : strukturierter Markdown-Block mit
+             Format · Preisrahmen · Versprechen · Zielgruppe · gelöstes Problem · Verkaufsplattformen
+- insight  : WARUM es Nachfrage gibt (die Beleg-Begründung)
+- source   : belegendes bewährtes Format aus der Sheet
+             (z. B. „Belegt durch: Notion Business/Creator OS — Research-Sheet #3")
+- status   : "pending" → "approved"/"rejected" (unverändert)
+
+Gespeichert in: bestehende Supabase-Tabelle `suggestions`
+Einzige DB-Änderung: category-CHECK-Constraint erlaubt zusätzlich 'digital_product'
+```
+
+### Wissensbasis: die Research-Sheet
+- Menschenlesbare Quelle bleibt `docs/research/digital-product-research.md`.
+- Für die Laufzeit wird der Inhalt als String-Konstante in `src/lib/digital-product-research.ts` gebündelt (gleiches Muster wie `NORA_COMPANY_CONTEXT` in `nora-context.ts`). So ist sie in der Serverless-Funktion garantiert verfügbar — kein Dateizugriff zur Laufzeit, keine Notion-Abhängigkeit.
+- Aktualisierung: Stefan (oder Claude Code) editiert die Konstante und deployed neu. Bewusst kein Live-Editing-Pfad im MVP.
+- Best-effort: Ist die Konstante leer/fehlt sie, gibt `generateProductOpportunity()` still `null` zurück — der restliche Tageslauf bleibt unberührt.
+
+### Tech-Entscheidungen (warum so)
+- **Separater Claude-Call statt erweitertem Haupt-Schema:** Eine Produkt-Chance braucht einen eigenen, fokussierten Prompt (mit der ganzen Sheet als Kontext) und darf den Hauptlauf bei Fehler nicht gefährden. Ein isolierter, in try/catch gekapselter Call erfüllt beides — exakt die Best-effort-Philosophie der PROJ-7-Quellen.
+- **Wiederverwendung der bestehenden Spalten:** Die Detailfelder als Markdown im `body` halten das Dashboard-Card-Rendering unverändert und vermeiden eine invasivere Schema-Migration. Die AC-Sichtbarkeit ist voll erfüllt, weil die Card `body` bereits anzeigt.
+- **Eigene Kategorie `digital_product`:** Saubere Trennung von der QualiPilot-Produktentwicklung (`product`), eigene Dashboard-Gruppe/Farbe und eine eindeutige Dedup-Historie.
+- **Bundling statt FS/Notion:** Garantierte Verfügbarkeit ohne neue Infrastruktur; konsistent mit dem bestehenden Kontext-Muster.
+
+### Dependencies (Pakete)
+**Keine neuen Pakete.** Nutzt ausschließlich Bestehendes: `@anthropic-ai/sdk` (Generierung), Supabase-Client (Speicherung), bestehende Dashboard-/Handoff-Bausteine (PROJ-3/4/5/8).
+
+### Env-Vars
+**Keine neuen Env-Vars.** Nutzt `ANTHROPIC_API_KEY` und die bestehende Supabase-Verbindung.
 
 ## QA Test Results
 _To be added by /qa_
