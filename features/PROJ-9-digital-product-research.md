@@ -204,7 +204,89 @@ Tests: **120 grün** (`npm test`), `tsc --noEmit` exit 0.
 - `route.test.ts`: +2 Tests (Produkt-Chance wird an Batch angehängt → count 4; best-effort null → count 3).
 
 ## QA Test Results
-_To be added by /qa_
+
+**QA Engineer:** Claude Code
+**Date:** 2026-06-17
+**Status: IN REVIEW — 2 Medium-Bugs (kein Critical/High)**
+
+### Test-Zusammenfassung
+| Kategorie | Wert |
+|---|---|
+| Acceptance Criteria getestet | 7 / 7 |
+| Acceptance Criteria bestanden | 7 (AC-2 mit Formatierungs-Bug) |
+| Unit-Tests gesamt | 120 (alle grün) |
+| davon neu für PROJ-9 | 7 (anthropic.test.ts +5, route.test.ts +2) |
+| E2E-Tests geschrieben | 6 (2 Route-Schutz + 4 credential-abhängig skipped) |
+| Bugs gefunden | 2 Medium, 2 Low/Info |
+
+### Testumgebung — Einschränkung
+Der Next-Dev-Server bootet in dieser Umgebung nicht (keine `NEXT_PUBLIC_SUPABASE_URL`/Key, kein `ANTHROPIC_API_KEY`), daher konnten **E2E-Tests und der Live-Generierungslauf hier nicht ausgeführt** werden (identische Einschränkung wie bei PROJ-7). Die Verifikation stützt sich auf die 120 Unit-Tests + Code-Inspektion. Die E2E-Specs (`tests/PROJ-9-*.spec.ts`) laufen in einer Umgebung mit Credentials.
+
+### Acceptance Criteria
+| ID | Kriterium | Ergebnis | Abdeckung |
+|---|---|---|---|
+| AC-1 | Batch enthält genau 1 Produkt-Chance zusätzlich | ✅ PASS | `route.test.ts` (count 4 mit Chance, 3 ohne); `anthropic.test.ts` |
+| AC-2 | Detailfelder sichtbar (Format, Preis, Versprechen, Zielgruppe, Problem, Plattformen, Beleg) | ⚠️ PASS mit BUG-1 | Felder werden im `body`/`insight`/`source` zusammengesetzt (`anthropic.test.ts`) — **aber als Fließtext mit literalen `**` gerendert** (siehe BUG-1) |
+| AC-3 | Referenziert ≥1 konkretes Format aus der Sheet | ✅ PASS | Prompt + Schema erzwingen Feld `proven_format`; `source` = „Belegt durch: …" |
+| AC-4 | Keine Wiederholung kürzlich vorgeschlagener Chancen | ✅ PASS | `anthropic.test.ts` — Dedup listet nur `digital_product`-Historie als „NICHT wiederholen" |
+| AC-5 | Bestätigt → Monday-Task + Notion-Dokument | ✅ PASS | Approve-Pfad (`actions/suggestions.ts`) ist kategorie-agnostisch (keine category-Gates) |
+| AC-6 | Sheet fehlt/leer → still überspringen, Rest läuft | ✅ PASS | `anthropic.test.ts` (null ohne Key/Sheet); `route.test.ts` (null → count 3) |
+| AC-7 | Abgelehnt → verschwindet aus offener Liste, in Historie | ✅ PASS | Bestehendes PROJ-3-Verhalten, kategorie-agnostisch |
+
+### Edge Cases
+| Edge Case | Ergebnis |
+|---|---|
+| Sheet fehlt/leer → `null` | ✅ Unit-Test |
+| Claude scheitert 3× → `null`, kein Wurf | ✅ `anthropic.test.ts` (3 Versuche, dann null) |
+| Produkt-Chance scheitert, Hauptlauf erfolgreich | ✅ Funktion wirft nie → Batch ohne Chance gespeichert |
+| Leere Historie (frischer Start) → Dedup-Default | ✅ Prompt-Default „Noch keine" |
+| Bestätigt, aber Monday/Notion down | ✅ Gleicher Pfad wie bestehende Vorschläge |
+| Sheet sehr lang | ✅ Konstante ~3 KB, komplett in Prompt — kein Overload |
+
+### Bugs
+
+**BUG-1 — MEDIUM — Produkt-Chance-`body` rendert als Fließtext mit literalen `**`**
+- Beschreibung: `generateProductOpportunity()` baut den `body` mit Markdown-Fettungen (`**Format:**`) und Zeilenumbrüchen (`\n`). Die `SuggestionCard` rendert den `body` aber als reinen Text in einem `<p>` **ohne** Markdown-Renderer und **ohne** `whitespace-pre-line`. Folge: Die 6 Detailfelder erscheinen als eine durchgehende Zeile mit sichtbaren `**`-Sternchen statt als sauber umbrochene, fettgesetzte Labels.
+- Schritte: Produkt-Chance generieren → Dashboard öffnen → Card der Kategorie „Produkt-Chance" ansehen.
+- Impact: Alle Infos sind vorhanden (AC-2 technisch erfüllt), aber die Lesbarkeit/Scanbarkeit leidet — direkt gegen die Kern-UX „in < 2 Min auf einen Blick entscheiden".
+- Workaround: Text bleibt lesbar (nur unschön).
+- Fix-Empfehlung (Frontend): `whitespace-pre-line` am body-`<p>` + `**` entfernen, ODER einen leichten Markdown-Renderer für den body einführen.
+- Fix vor Deploy: empfohlen (Medium).
+
+**BUG-2 — MEDIUM — Best-effort-Isolation am DB-Insert unvollständig + Migrations-Voraussetzung**
+- Beschreibung: Die Produkt-Chance wird im **selben** `suggestions.insert(rows)`-Aufruf wie die Kern-Vorschläge gespeichert. Ist die PROJ-9-`category`-CHECK-Migration in der Ziel-DB **nicht** angewendet, lehnt Postgres den gesamten Insert ab → der komplette Tageslauf scheitert (Status `failed`, 500) — eine Regression auf PROJ-2/3, nicht nur Wegfall der Chance. Die code-seitige Best-effort-Garantie (`null`-Rückgabe) wird dadurch auf DB-Ebene unterlaufen.
+- Impact: Hoch, falls die Migration vergessen wird; null, falls sie (wie dokumentiert) vor dem Deploy läuft.
+- Workaround / Mitigation: **`supabase/schema.sql` MUSS vor/with dem Deploy ausgeführt werden** (idempotent). Robustere Alternative (Backend): die Produkt-Chance in einem separaten Insert speichern, damit eine Constraint-Ablehnung den Kern-Batch nie mitreißt.
+- Fix vor Deploy: Migration ist Pflicht-Voraussetzung; separater Insert ist optionale Härtung.
+
+**LOW / Info-1 — Prompt-Injection über die Research-Sheet**
+- Die Sheet ist eine gebündelte Konstante, ausschließlich vom Entwickler (Stefan) kontrolliert — geringeres Risiko als die Notion-Living-Spec aus PROJ-7. Kein Handlungsbedarf für ein Single-User-System.
+
+**LOW / Info-2 — Generische Notion-Ausarbeitung für `digital_product`**
+- `CATEGORY_PROMPTS` in `anthropic.ts` hat keinen Eintrag für `digital_product` → die Ausarbeitung (PROJ-8) nutzt `DEFAULT_ELABORATION_PROMPT` (Kontext/Ziel/Maßnahmen/Nächste Aktion). Funktioniert, ist aber nicht produkt-spezifisch. Optionale Verbesserung, kein Bug.
+
+### Security-Audit (Red Team)
+| Check | Ergebnis | Notiz |
+|---|---|---|
+| XSS über Claude-Output im body | ✅ PASS | `body`/`insight`/`source` werden als Text gerendert (React escaped); kein `dangerouslySetInnerHTML`, kein Markdown-HTML |
+| Auth-Bypass `/api/generate-suggestions` | ✅ PASS | Cron-Secret ODER Session — unverändert |
+| RLS auf `suggestions` | ✅ PASS | Produkt-Chance ist normale `suggestions`-Zeile; bestehende RLS greift |
+| Prompt-Injection (Sheet) | ⚠️ LOW | Dev-kontrollierte Konstante, Single-User |
+| Neue Secrets / Env-Vars | ✅ PASS | Keine neuen — nutzt `ANTHROPIC_API_KEY` |
+| SQL-Injection | ✅ PASS | Supabase-SDK, parametrisiert |
+
+### Regression
+- Unit-Suite **120/120 grün** — alle bestehenden PROJ-2…PROJ-8-Tests inklusive.
+- `tsc --noEmit` exit 0.
+- Haupt-Generierung (`generateSuggestions`) und `CATEGORIES` (3) unverändert → Hauptlauf erzeugt die 4. Kategorie nicht selbst.
+- ⚠️ Regressions-Risiko nur via BUG-2 (siehe oben), falls Migration nicht angewendet.
+
+### Production-Ready-Einschätzung
+**Kein Critical-, kein High-Bug.** Formal deploy-fähig, ABER:
+1. **BUG-2-Migration ist Pflicht** vor Deploy (sonst Regression auf den Tageslauf).
+2. **BUG-1 (Rendering)** sollte vor Deploy gefixt werden — betrifft die Kern-UX der neuen Karte direkt.
+
+Empfehlung: BUG-1 (Frontend) + optional BUG-2-Härtung (separater Insert) beheben, dann erneut `/qa`-Kurzcheck → Approved.
 
 ## Deployment
 _To be added by /deploy_
