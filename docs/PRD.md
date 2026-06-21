@@ -1,7 +1,7 @@
 # Product Requirements Document
 
 ## Vision
-Der Kordix AI BizDev Agent ist ein täglicher KI-Assistent, der den aktuellen Stand von Kordix AI analysiert und konkrete Verbesserungsvorschläge in drei Bereichen generiert: Content & Marketing, Produktentwicklung und Operations. Stefan prüft und bestätigt die Vorschläge — der Agent setzt sie dann selbständig als Monday.com-Tasks und Notion-Dokumente um.
+Der Kordix AI BizDev Agent ist ein täglicher KI-Assistent, der den aktuellen Stand von Kordix AI analysiert und konkrete Verbesserungsvorschläge in vier Bereichen generiert: Content & Marketing, Produktentwicklung, Operations und Design & Brand. Stefan prüft und bestätigt die Vorschläge — der Agent setzt sie dann selbständig als Monday.com-Tasks und Notion-Dokumente um.
 
 ## Target Users
 **Stefan Billich** — Solo-Gründer von Kordix AI, GMP Qualification Specialist. Baut KI-Lösungen für Pharma & Healthcare (erstes Produkt: QualiPilot). Problem: Zeit ist knapp, er entwickelt allein, und Business Development wird leicht zugunsten von Produktarbeit vernachlässigt. Braucht einen strukturierten täglichen Workflow, der BizDev automatisch vorantreibt.
@@ -19,6 +19,7 @@ Der Kordix AI BizDev Agent ist ein täglicher KI-Assistent, der den aktuellen St
 | P1 | Implementation Tracking & History | Deployed ✓ |
 | P2 | Context-Aware Suggestions (Live-Daten) | Deployed ✓ |
 | P2 | Digital Product Research (Demand Validation) | Planned |
+| P2 | Design & Brand (Vorschlags-Kategorie) | In Progress |
 
 ## Success Metrics
 - ≥5 Vorschläge pro Woche von Stefan geprüft
