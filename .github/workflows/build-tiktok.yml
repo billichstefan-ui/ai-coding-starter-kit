@@ -1,0 +1,61 @@
+name: build-tiktok
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/vibrant-dirac-6n1nsr
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core python3-pip
+          python3 -m pip install --quiet pillow
+
+      - name: Download Higgsfield assets (cloudfront)
+        working-directory: tiktok-build
+        run: |
+          set -euo pipefail
+          BASE="https://d8j0ntlcm91z4.cloudfront.net/user_3F6UVmiDGRtp3TwVQvwWDTHaXmu"
+          curl -fSL --retry 4 --retry-delay 3 -o clip1.mp4 "$BASE/hf_20260623_101313_bcdbeccc-8540-4c6c-9602-d7d031dacb2c.mp4"
+          curl -fSL --retry 4 --retry-delay 3 -o clip2.mp4 "$BASE/hf_20260623_103208_a4337db1-d19f-4c61-b614-1f0135485dab.mp4"
+          curl -fSL --retry 4 --retry-delay 3 -o clip3.mp4 "$BASE/hf_20260623_101319_60a8f4ed-1a36-4d3e-9e36-5f701b8ad5ba.mp4"
+          curl -fSL --retry 4 --retry-delay 3 -o clip4.mp4 "$BASE/hf_20260623_101407_30e74eb3-1ea7-4736-a845-668d6a474227.mp4"
+          curl -fSL --retry 4 --retry-delay 3 -o voice.mp3 "$BASE/hf_20260623_102422_8b6f2f74-b521-4e7c-a4c4-f31a99cdf93b.mp3"
+          ls -la
+          file clip1.mp4 voice.mp3
+
+      - name: Generate text overlays
+        working-directory: tiktok-build
+        run: python3 make_overlays.py
+
+      - name: Assemble video
+        working-directory: tiktok-build
+        run: bash assemble.sh
+
+      - name: Probe result
+        run: ffprobe -v error -show_format -show_streams tiktok-build/pancake_tiktok.mp4
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pancake_tiktok
+          path: tiktok-build/pancake_tiktok.mp4
+          retention-days: 7
+
+      - name: Commit result to branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f tiktok-build/pancake_tiktok.mp4
+          git commit -m "build(tiktok): assembled 60s pancake video [skip ci]"
+          git push origin HEAD:claude/vibrant-dirac-6n1nsr
