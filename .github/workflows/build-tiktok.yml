@@ -1,6 +1,9 @@
 name: build-tiktok
 
 on:
+  push:
+    branches:
+      - claude/vibrant-dirac-6n1nsr
   workflow_dispatch:
 
 permissions:
@@ -8,6 +11,8 @@ permissions:
 
 jobs:
   build:
+    # Guard against the runner's own commit-back re-triggering the workflow.
+    if: ${{ !contains(github.event.head_commit.message, 'build(tiktok)') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
