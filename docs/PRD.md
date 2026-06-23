@@ -18,8 +18,8 @@ Der Kordix AI BizDev Agent ist ein täglicher KI-Assistent, der den aktuellen St
 | P1 | Notion-Dokument-Ausarbeitung | Deployed ✓ |
 | P1 | Implementation Tracking & History | Deployed ✓ |
 | P2 | Context-Aware Suggestions (Live-Daten) | Deployed ✓ |
-| P2 | Digital Product Research (Demand Validation) | Planned |
-| P2 | Design & Brand (Vorschlags-Kategorie) | In Progress |
+| P2 | Digital Product Research (Demand Validation) | Approved (ready to deploy) |
+| P2 | Design & Brand (Vorschlags-Kategorie) | Approved (ready to deploy) |
 
 ## Success Metrics
 - ≥5 Vorschläge pro Woche von Stefan geprüft
