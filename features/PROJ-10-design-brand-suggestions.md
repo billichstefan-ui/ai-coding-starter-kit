@@ -1,8 +1,8 @@
 # PROJ-10: Design & Brand (Vorschlags-Kategorie)
 
-## Status: In Progress
+## Status: Approved
 **Created:** 2026-06-16
-**Last Updated:** 2026-06-21
+**Last Updated:** 2026-06-23
 
 ## Dependencies
 - **Requires:** PROJ-2 (Daily Suggestion Engine) — `category`-Enum, Prompt & Output-Schema um `design` erweitern
@@ -88,3 +88,65 @@ Die Gesamtmenge bleibt **3–5 Vorschläge pro Tag**; Claude verteilt flexibel �
 - **Geändert:** `src/lib/anthropic.ts` (`CATEGORIES` + `design` Generierungs-Guidance + `design`-Ausarbeitungs-Prompt), `src/lib/nora-context.ts` (Sektion „Visuelle Identität & Brand Guide"), `supabase/schema.sql` (CHECK um `design`), Dashboard-Komponenten (`dashboard-client.tsx`, `history-view.tsx`, `suggestion-card.tsx`).
 - **Tests:** `src/lib/anthropic.test.ts` um Design-Ausarbeitungs- und Generierungs-Prompt-Tests erweitert. Gesamt grün; `tsc --noEmit` exit 0.
 - **Offen vor Deploy:** `supabase/schema.sql` im Supabase SQL-Editor ausführen (idempotent), damit `category = 'design'`-Zeilen akzeptiert werden. Optionale formale `/qa`-Runde + `/deploy`.
+
+## QA Test Results
+
+**QA Engineer:** Claude Code
+**Date:** 2026-06-23
+**Status: APPROVED — kein Critical-, kein High-, kein Medium-Bug.**
+
+### Test-Zusammenfassung
+| Gate | Wert |
+|---|---|
+| Acceptance Criteria getestet | 10 / 10 |
+| Acceptance Criteria bestanden | 10 / 10 |
+| Unit-Tests gesamt | 123 (alle grün) |
+| `tsc --noEmit` | exit 0 |
+| Production-Build (`npm run build`) | ✅ erfolgreich (alle 6 Routen generiert) |
+| Bugs gefunden | 0 |
+
+### Testumgebung — Einschränkung
+Frischer Container ohne `ANTHROPIC_API_KEY`/Supabase-Credentials — der Live-Generierungslauf und E2E gegen die echte DB sind hier nicht ausführbar (gleiche Einschränkung wie PROJ-7/PROJ-9). Verifikation stützt sich auf 123 Unit-Tests, erfolgreichen Production-Build und Code-Inspektion jeder AC-Stelle.
+
+### Acceptance Criteria
+| Bereich | Kriterium | Ergebnis | Beleg im Code |
+|---|---|---|---|
+| Generierung | `design` gültiger `category`-Wert | ✅ PASS | `anthropic.ts` `CATEGORIES = [...,'design']`; `SuggestionSchema` `z.enum(CATEGORIES)` |
+| Generierung | `design`-Vorschlag referenziert konkrete Markenelemente (Sora, #0078FF, Gradient, Navy) | ✅ PASS | Prompt-Block „Kategorie design" + `nora-context.ts` Sektion „Visuelle Identität & Brand Guide" |
+| Generierung | 3–5 gesamt, flexible Verteilung über 4 Kategorien, keine Quote | ✅ PASS | `buildPrompt()` „Verteile flexibel … keine feste Quote"; `MIN/MAX_SUGGESTIONS` unverändert |
+| Generierung | `title/body/insight/source/category` befüllt | ✅ PASS | `SuggestionSchema` erzwingt alle Felder |
+| Anzeige | eigenes Badge „Design & Brand" + Farbe Deep Teal #0E9594 | ✅ PASS | `suggestion-card.tsx`/`history-view.tsx` `CATEGORY_CONFIG.design = { label:'Design & Brand', color:'#0E9594' }` |
+| Anzeige | eigener gruppierter Abschnitt | ✅ PASS | `dashboard-client.tsx` `CATEGORY_ORDER` enthält `design`; Gruppierung mappt darüber |
+| Anzeige | Review-Flow (Approve/Reject) identisch | ✅ PASS | Approve/Reject in `actions/suggestions.ts` kategorie-agnostisch (keine category-Gates) |
+| Umsetzung | dieselbe Monday/Notion-Pipeline | ✅ PASS | Handoff kategorie-agnostisch; zusätzlich eigener `design`-Ausarbeitungs-Prompt in `CATEGORY_PROMPTS` |
+| Robustheit | bestehende Kategorien bleiben gültig (Rückwärtskompatibilität) | ✅ PASS | CHECK-Constraint nur additiv erweitert; `marketing/product/operations` unverändert |
+| Robustheit | ungültiger `category`-Wert wird nicht gespeichert | ✅ PASS | `z.enum(CATEGORIES)` lehnt unbekannte Werte ab |
+
+### Edge Cases
+| Edge Case | Ergebnis |
+|---|---|
+| Kein `design`-Vorschlag an einem Tag | ✅ flexible Verteilung, kein Fehler |
+| Nur `design`-Vorschläge (innerhalb 3–5) | ✅ erlaubt |
+| Alte DB-Einträge ohne `design` | ✅ rückwärtskompatibel (CHECK nur erweitert) |
+| Unbekannte Kategorie im Dashboard | ✅ Fallback-Config (`label`=Rohwert, Farbe `#8892B0`) statt Crash |
+
+### Security-Audit (Red Team)
+| Check | Ergebnis | Notiz |
+|---|---|---|
+| XSS über Claude-Output (design-`body`) | ✅ PASS | als Text gerendert (React escaped), kein `dangerouslySetInnerHTML` |
+| Auth-Bypass `/api/generate-suggestions` | ✅ PASS | Cron-Secret ODER Session — unverändert |
+| RLS auf `suggestions` | ✅ PASS | `design` ist normale `suggestions`-Zeile |
+| Input-Validierung | ✅ PASS | `z.enum(CATEGORIES)` server-seitig |
+| Neue Secrets / Env-Vars | ✅ PASS | keine |
+| SQL-Injection | ✅ PASS | Supabase-SDK, parametrisiert |
+
+### Regression
+- 123/123 Unit-Tests grün (inkl. aller PROJ-2…PROJ-9-Tests).
+- `tsc --noEmit` exit 0, Production-Build erfolgreich.
+- Haupt-Generierung unverändert außer additiver 4. Kategorie; PROJ-9-Produkt-Chance (separater best-effort Insert) koexistiert konfliktfrei.
+
+### Production-Ready-Einschätzung
+**APPROVED — keine offenen Bugs.** Verbleibende Deploy-Voraussetzung (credential-gebunden, von Stefan auszuführen): `supabase/schema.sql` (idempotent) im Supabase SQL-Editor anwenden, damit `category = 'design'`-Zeilen akzeptiert werden — sonst lehnt Postgres den Insert ab. Da `design` Teil des Kern-Batch-Inserts ist (kein separater best-effort Insert wie PROJ-9), ist diese Migration vor dem nächsten Generierungslauf **Pflicht**.
+
+## Deployment
+_To be added by /deploy — siehe Deploy-Runbook (Supabase-Migration + Vercel) im Branch-Commit._

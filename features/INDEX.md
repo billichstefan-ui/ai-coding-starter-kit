@@ -24,7 +24,7 @@
 | PROJ-7 | Context-Aware Suggestions (Live-Daten) | Deployed | [Spec](PROJ-7-context-aware-suggestions.md) | 2026-06-05 |
 | PROJ-8 | Notion-Dokument-Ausarbeitung | Deployed | [Spec](PROJ-8-notion-document-elaboration.md) | 2026-06-07 |
 | PROJ-9 | Digital Product Research (Demand Validation) | Approved | [Spec](PROJ-9-digital-product-research.md) | 2026-06-17 |
-| PROJ-10 | Design & Brand (Vorschlags-Kategorie) | In Progress | [Spec](PROJ-10-design-brand-suggestions.md) | 2026-06-16 |
+| PROJ-10 | Design & Brand (Vorschlags-Kategorie) | Approved | [Spec](PROJ-10-design-brand-suggestions.md) | 2026-06-16 |
 
 <!-- Add features above this line -->
 

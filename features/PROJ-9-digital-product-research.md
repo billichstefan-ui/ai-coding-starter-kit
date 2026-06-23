@@ -1,8 +1,8 @@
 # PROJ-9: Digital Product Research (Demand Validation)
 
-## Status: Planned
+## Status: Approved
 **Created:** 2026-06-17
-**Last Updated:** 2026-06-17
+**Last Updated:** 2026-06-23
 
 ## Dependencies
 - Requires: PROJ-2 (Daily Suggestion Engine) — fügt eine 4. Kategorie in den bestehenden Generierungslauf ein
