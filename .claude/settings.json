@@ -21,6 +21,8 @@
       "Edit(**/.ssh/**)"
     ],
     "allow": [
+      "mcp__9ae9cfad-d527-4834-94c3-572c0762fcd6__notion-create-pages",
+      "mcp__9ae9cfad-d527-4834-94c3-572c0762fcd6__notion-update-page",
       "Bash(npm install)",
       "Bash(npm run dev:*)",
       "Bash(npm run build:*)",
