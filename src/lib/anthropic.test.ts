@@ -313,11 +313,25 @@ describe('generateProductOpportunity', () => {
     expect(prompt).not.toContain('LinkedIn-Post')
   })
 
-  it('gibt null zurück wenn Claude wiederholt fehlschlägt (best-effort)', async () => {
+  it('ruft die API mit großzügigem max_tokens-Budget auf (Regression: 4000 verhungerte das adaptive Thinking → 0 Produkt-Chancen in Prod)', async () => {
     process.env.ANTHROPIC_API_KEY = 'test-key'
+    mockParse.mockResolvedValue({ parsed_output: PRODUCT_OPP_OUTPUT })
+    await generateProductOpportunity(EMPTY_LIVE_CONTEXT)
+    // Muss mit dem Budget des Hauptlaufs mithalten — sonst frisst high-effort adaptive
+    // Thinking das Limit auf, die strukturierte Antwort wird abgeschnitten und parse()
+    // scheitert bei JEDEM Versuch (der stille null-Fallback, der PROJ-9 in Prod tötete).
+    expect(mockParse.mock.calls[0][0].max_tokens).toBeGreaterThanOrEqual(16000)
+  })
+
+  it('gibt null zurück UND loggt den Fehler wenn Claude wiederholt fehlschlägt (best-effort, nicht mehr still)', async () => {
+    process.env.ANTHROPIC_API_KEY = 'test-key'
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     mockParse.mockRejectedValue(new Error('API down'))
     const result = await generateProductOpportunity(EMPTY_LIVE_CONTEXT)
     expect(result).toBeNull()
     expect(mockParse).toHaveBeenCalledTimes(3)
+    // Hardening: der Fehler darf nicht mehr stumm verschluckt werden (sonst wieder unsichtbar).
+    expect(errSpy).toHaveBeenCalled()
+    errSpy.mockRestore()
   }, 15000)
 })

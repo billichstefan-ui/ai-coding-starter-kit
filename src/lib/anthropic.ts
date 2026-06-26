@@ -350,7 +350,11 @@ export async function generateProductOpportunity(
     try {
       const response = await client.messages.parse({
         model: MODEL,
-        max_tokens: 4000,
+        // 16000 wie der Hauptlauf (generateSuggestions). High-effort adaptive Thinking
+        // verbraucht erst tausende Thinking-Tokens; ein zu enges Limit (vorher 4000)
+        // schneidet die strukturierte Antwort ab → parse scheitert JEDES Mal → stiller
+        // null-Fallback. Genau das ließ PROJ-9 in Prod ~9 Tage lang 0 Chancen liefern.
+        max_tokens: 16000,
         thinking: { type: 'adaptive' },
         output_config: {
           effort: 'high',
@@ -383,13 +387,23 @@ export async function generateProductOpportunity(
         insight: p.demand_evidence,
         source: `Belegt durch: ${p.proven_format}`,
       }
-    } catch {
+    } catch (error) {
+      // Best-effort bleibt — aber NICHT mehr still. Ohne Log war PROJ-9 ~9 Tage
+      // unsichtbar tot (0 Produkt-Chancen in Prod). Fehler in den Vercel-Logs sichtbar
+      // machen, ohne den Tageslauf zu blockieren.
+      console.error(
+        `generateProductOpportunity: Versuch ${attempt}/${MAX_RETRIES} fehlgeschlagen:`,
+        error instanceof Error ? error.message : error
+      )
       if (attempt < MAX_RETRIES) {
         await new Promise(resolve => setTimeout(resolve, attempt * 1000))
       }
     }
   }
 
-  // Alle Versuche gescheitert → best-effort: still überspringen.
+  // Alle Versuche gescheitert → best-effort: Produkt-Chance entfällt, Tageslauf läuft weiter.
+  console.error(
+    `generateProductOpportunity: alle ${MAX_RETRIES} Versuche gescheitert — Produkt-Chance heute übersprungen.`
+  )
   return null
 }

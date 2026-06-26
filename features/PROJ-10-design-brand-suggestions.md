@@ -2,7 +2,7 @@
 
 ## Status: In Progress
 **Created:** 2026-06-16
-**Last Updated:** 2026-06-21
+**Last Updated:** 2026-06-26
 
 ## Dependencies
 - **Requires:** PROJ-2 (Daily Suggestion Engine) — `category`-Enum, Prompt & Output-Schema um `design` erweitern
@@ -88,3 +88,7 @@ Die Gesamtmenge bleibt **3–5 Vorschläge pro Tag**; Claude verteilt flexibel �
 - **Geändert:** `src/lib/anthropic.ts` (`CATEGORIES` + `design` Generierungs-Guidance + `design`-Ausarbeitungs-Prompt), `src/lib/nora-context.ts` (Sektion „Visuelle Identität & Brand Guide"), `supabase/schema.sql` (CHECK um `design`), Dashboard-Komponenten (`dashboard-client.tsx`, `history-view.tsx`, `suggestion-card.tsx`).
 - **Tests:** `src/lib/anthropic.test.ts` um Design-Ausarbeitungs- und Generierungs-Prompt-Tests erweitert. Gesamt grün; `tsc --noEmit` exit 0.
 - **Offen vor Deploy:** `supabase/schema.sql` im Supabase SQL-Editor ausführen (idempotent), damit `category = 'design'`-Zeilen akzeptiert werden. Optionale formale `/qa`-Runde + `/deploy`.
+
+## Live-Verifikation (2026-06-26)
+- **Bestätigt live in Produktion:** Die `category`-CHECK-Constraint in der Produktiv-DB (`nexora-ai`) enthält bereits `design` — die Migration aus `supabase/schema.sql` ist angewendet. Der tägliche Lauf hat am 2026-06-26 bereits **2 `design`-Vorschläge** erzeugt (Status `pending`, warten auf Review). PROJ-10 ist damit **funktional deployed**.
+- **Status bleibt „In Progress":** Eine formale `/qa`-Runde und der formale `/deploy`-Schritt wurden nicht durchlaufen — das Feature kam per PR-Merge (PR #4) in den Prod-Build. Funktional live, prozessual offen. (Bewusst kein Sprung auf „Deployed", um keine nicht durchlaufenen Workflow-Schritte zu behaupten.)

@@ -1,8 +1,8 @@
 # PROJ-9: Digital Product Research (Demand Validation)
 
-## Status: Planned
+## Status: Approved
 **Created:** 2026-06-17
-**Last Updated:** 2026-06-17
+**Last Updated:** 2026-06-26
 
 ## Dependencies
 - Requires: PROJ-2 (Daily Suggestion Engine) — fügt eine 4. Kategorie in den bestehenden Generierungslauf ein
@@ -290,6 +290,21 @@ Der Next-Dev-Server bootet in dieser Umgebung nicht (keine `NEXT_PUBLIC_SUPABASE
 **APPROVED — kein Critical-, kein High-, keine offenen Medium-Bugs.** Beide Medium-Bugs (BUG-1 Rendering, BUG-2 Insert-Isolation) sind gefixt und durch Tests abgesichert (121 grün, `tsc` exit 0).
 
 **Verbleibende Deploy-Voraussetzung:** `supabase/schema.sql` (idempotent) im Supabase SQL-Editor ausführen, damit `category = 'digital_product'`-Zeilen akzeptiert werden — die Produkt-Chance erscheint sonst nicht (aber der Kern-Tageslauf läuft dank BUG-2-Fix unabhängig weiter).
+
+## Post-Deploy Bug & Fix (2026-06-26)
+
+**Befund (Live-Check Produktion `nexora-ai`):** Seit Merge (PR #3) **null** `digital_product`-Zeilen in der Produktiv-DB — die Produkt-Chance wurde nie erzeugt, obwohl der Code deployed war (Design aus dem späteren PR #4 lief bereits live → PROJ-9 war zwangsläufig im selben Build). Best-effort + leerer `catch {}` ließen den Fehler still und ohne Log-Spur verschwinden.
+
+**Root Cause:** `generateProductOpportunity()` rief Claude mit `max_tokens: 4000` bei `thinking: { type: 'adaptive' }` + `effort: 'high'` auf. `max_tokens` deckelt Thinking **und** Antwort gemeinsam; das high-effort Thinking verbrauchte das Budget, die strukturierte Antwort wurde abgeschnitten, `parsed_output` blieb leer → wirft → Retry → bei jedem der 3 Versuche identisch → `return null`. Der Hauptlauf (`generateSuggestions`, `max_tokens: 16000`) und die Ausarbeitung (`8000`) waren nie betroffen — PROJ-9 war der einzige Call mit dem zu engen Limit.
+
+**Warum QA es nicht fand:** Die Unit-Tests mocken den Anthropic-Client (liefern ein fertiges `parsed_output`); der echte Generierungslauf war in der Testumgebung mangels `ANTHROPIC_API_KEY` nicht ausführbar (im QA-Report dokumentiert). Der Bug existiert nur gegen das reale Modell.
+
+**Fix:**
+- `src/lib/anthropic.ts`: `max_tokens` in `generateProductOpportunity` von `4000` → `16000` (Parität mit dem Hauptlauf).
+- `src/lib/anthropic.ts`: leerer `catch {}` ersetzt durch `console.error`-Logging je Versuch + finalen Log — ein Ausfall ist nie wieder unsichtbar. Best-effort bleibt: der Tageslauf wird nicht blockiert.
+- `src/lib/anthropic.test.ts`: Regressionstest (`max_tokens` ≥ 16000) + Test, dass der Fehlerpfad jetzt loggt. Suite **124 grün**, `tsc --noEmit` exit 0.
+
+**Verifikation:** Unit-Ebene grün. **Live-Bestätigung steht aus** — erst nach Redeploy + nächstem Generierungslauf möglich (dann sollte genau eine `digital_product`-Zeile erscheinen). Dieselbe Mock-/Env-Grenze, die den Bug ursprünglich verbarg, verhindert eine Live-Verifikation in dieser Umgebung.
 
 ## Deployment
 _To be added by /deploy_
