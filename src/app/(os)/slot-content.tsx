@@ -21,12 +21,6 @@ const SLOTS: Record<string, SlotDef> = {
       'Projekt-Übersicht und Heatmap. Verbinde eine Quelle (z. B. Monday.com), um aktive Projekte und Status hier zu sehen.',
     provider: 'Monday.com',
   },
-  agents: {
-    title: 'AI Agents',
-    description:
-      'Status und Läufe deiner KI-Agenten. Sobald Agenten-Telemetrie angebunden ist, erscheinen Aktivität und Ergebnisse hier.',
-    provider: 'Agent-Telemetrie',
-  },
   crm: {
     title: 'CRM',
     description:

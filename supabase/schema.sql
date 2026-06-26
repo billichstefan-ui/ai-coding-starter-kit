@@ -330,3 +330,73 @@ INSERT INTO projects (org_id, name, status, priority, progress, rev_potential, e
   ('00000000-0000-0000-0000-000000000001', 'Kordix AI (Marke & Beratung)', 'Aufbau',   'P1', 40, 4, 3, 3, 4, 'Angebots-/Positionierungs-Seite', 50),
   ('00000000-0000-0000-0000-000000000001', 'Content Factory',              'Bei Null', 'P1', 25, 3, 3, 5, 4, 'EP01 veröffentlichen, Pipeline etablieren', 60)
 ON CONFLICT (org_id, name) DO NOTHING;
+
+-- ============================================================
+-- COMPANY OS — Phase 2: AI Agents Control Center (additive, idempotent)
+-- agents     = Registry (eine Zeile pro Agent; NORA ist heute live).
+-- agent_runs = append-only Telemetrie pro Lauf (Status, Tokens, Kosten).
+-- Schreibt der tägliche Cron-/Dashboard-Lauf über den Service-Role-Key.
+-- ============================================================
+
+-- ─── agents (Registry) ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS agents (
+  key          TEXT PRIMARY KEY,
+  label        TEXT NOT NULL,
+  model        TEXT NOT NULL DEFAULT 'claude-opus-4-8',
+  module_key   TEXT REFERENCES modules(key),
+  status       TEXT NOT NULL DEFAULT 'slot' CHECK (status IN ('live','slot','disabled')),
+  schedule     TEXT,
+  description  TEXT,
+  sort_order   INT NOT NULL DEFAULT 0
+);
+
+ALTER TABLE agents ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Eingeloggte Nutzer können Agenten lesen" ON agents;
+CREATE POLICY "Eingeloggte Nutzer können Agenten lesen"
+  ON agents FOR SELECT USING (auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "Eingeloggte Nutzer können Agenten schreiben" ON agents;
+CREATE POLICY "Eingeloggte Nutzer können Agenten schreiben"
+  ON agents FOR ALL USING (auth.uid() IS NOT NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);
+
+-- ─── agent_runs (append-only Lauf-Telemetrie) ───────────────
+CREATE TABLE IF NOT EXISTS agent_runs (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id        UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  agent_key     TEXT NOT NULL REFERENCES agents(key) ON DELETE CASCADE,
+  started_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  finished_at   TIMESTAMPTZ,
+  status        TEXT NOT NULL DEFAULT 'running'
+                CHECK (status IN ('running','succeeded','failed')),
+  trigger       TEXT NOT NULL DEFAULT 'manual',
+  input_tokens  INT NOT NULL DEFAULT 0,
+  output_tokens INT NOT NULL DEFAULT 0,
+  cost_usd      NUMERIC NOT NULL DEFAULT 0,
+  summary       TEXT,
+  error         TEXT
+);
+
+ALTER TABLE agent_runs ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Eingeloggte Nutzer können Agent-Läufe lesen" ON agent_runs;
+CREATE POLICY "Eingeloggte Nutzer können Agent-Läufe lesen"
+  ON agent_runs FOR SELECT USING (auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "Eingeloggte Nutzer können Agent-Läufe schreiben" ON agent_runs;
+CREATE POLICY "Eingeloggte Nutzer können Agent-Läufe schreiben"
+  ON agent_runs FOR ALL USING (auth.uid() IS NOT NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE INDEX IF NOT EXISTS idx_agent_runs_agent ON agent_runs(agent_key, started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_agent_runs_started ON agent_runs(started_at DESC);
+
+-- Seed: NORA live (täglicher Cron), übrige Agenten als ehrliche Slots (idempotent)
+INSERT INTO agents (key, label, model, module_key, status, schedule, description, sort_order) VALUES
+  ('nora',     'NORA — BizDev-Agent', 'claude-opus-4-8', 'agents', 'live', '0 6 * * *', 'Generiert täglich BizDev-Vorschläge plus eine nachfrage-validierte Produkt-Chance. Stefan prüft und bestätigt.', 10),
+  ('csv',      'CSV-Analyst',         'claude-opus-4-8', 'agents', 'slot', NULL, 'Analysiert hochgeladene CSV-Exporte und leitet Kennzahlen ab. Wird angebunden, sobald ein Upload-Kanal steht.', 20),
+  ('finance',  'Finance-Agent',       'claude-opus-4-8', 'agents', 'slot', NULL, 'Aggregiert Umsatz, Kosten und Runway, sobald eine Finanzquelle (z. B. Stripe) verbunden ist.', 30),
+  ('research', 'Research-Agent',      'claude-opus-4-8', 'agents', 'slot', NULL, 'Validiert Produktnachfrage und Markttrends auf Abruf.', 40),
+  ('content',  'Content-Agent',       'claude-opus-4-8', 'agents', 'slot', NULL, 'Entwirft Posts und Dokumente aus bestätigten Vorschlägen.', 50)
+ON CONFLICT (key) DO NOTHING;
