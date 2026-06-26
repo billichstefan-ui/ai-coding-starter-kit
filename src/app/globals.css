@@ -83,3 +83,40 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ============================================================
+   KORDIX OS BRAND TOKENS  (Phase 0)
+   Prefix --kx-* → kollisionsfrei zu shadcn-Tokens.
+   Default (kein Theme-Attribut / .dark) = Dark Premium.
+   ============================================================ */
+@layer base {
+  :root {
+    /* Dark Premium ist der Default (Brand) */
+    --kx-bg: #070B1E;
+    --kx-surface: #0E1430;
+    --kx-surface-2: #161D3D;
+    --kx-border: #1C2340;
+    --kx-primary: #0078FF;
+    --kx-cyan: #38E5FF;
+    --kx-periwinkle: #7B81FF;
+    --kx-violet: #A720FF;
+    --kx-teal: #0E9594;
+    --kx-text: #FFFFFF;
+    --kx-text-muted: rgba(255, 255, 255, 0.64);
+    --kx-success: #22C55E;
+    --kx-warning: #F59E0B;
+    --kx-danger: #EF4444;
+    --kx-gradient: linear-gradient(90deg, #38E5FF, #0078FF, #7B81FF, #A720FF);
+  }
+
+  /* Light Mode: invertierte Surface-Leiter, Navy wird Text;
+     Primary/Akzente unverändert (Brand bleibt erkennbar). */
+  .light {
+    --kx-bg: #FFFFFF;
+    --kx-surface: #F4F6FB;
+    --kx-surface-2: #E8ECF6;
+    --kx-border: #D6DCEA;
+    --kx-text: #070B1E;
+    --kx-text-muted: rgba(7, 11, 30, 0.64);
+  }
+}
