@@ -1,6 +1,6 @@
 # PROJ-9: Digital Product Research (Demand Validation)
 
-## Status: Approved
+## Status: Deployed
 **Created:** 2026-06-17
 **Last Updated:** 2026-06-26
 
@@ -307,4 +307,13 @@ Der Next-Dev-Server bootet in dieser Umgebung nicht (keine `NEXT_PUBLIC_SUPABASE
 **Verifikation:** Unit-Ebene grün. **Live-Bestätigung steht aus** — erst nach Redeploy + nächstem Generierungslauf möglich (dann sollte genau eine `digital_product`-Zeile erscheinen). Dieselbe Mock-/Env-Grenze, die den Bug ursprünglich verbarg, verhindert eine Live-Verifikation in dieser Umgebung.
 
 ## Deployment
-_To be added by /deploy_
+
+**Deployed:** 2026-06-26 (via `/deploy`)
+**Vercel-Deployment:** `dpl_7u3oLpQUhMbhkcVwnGM71V79AZXY` — state **READY**, target **production**
+**Inspector:** https://vercel.com/billichstefan-uis-projects/ai-coding-starter-kit/7u3oLpQUhMbhkcVwnGM71V79AZXY
+**Main-Alias:** ai-coding-starter-kit-git-main-billichstefan-uis-projects.vercel.app
+**Merge:** PR #6 → `main` (Squash `7237eaf`)
+
+Der `max_tokens`-Fix (4000 → 16000) läuft in Produktion. Build grün, 124 Unit-Tests grün, `tsc --noEmit` exit 0. Die DB-`category`-Constraint (`digital_product`) war bereits angewendet.
+
+**Live-Bestätigung ausstehend:** Cron `0 6 * * *` (06:00 UTC). Der heutige Lauf (2026-06-26) erfolgte vor dem Deploy noch mit altem Code — die erste echte `digital_product`-Produkt-Chance entsteht beim nächsten Lauf **2026-06-27 06:00 UTC** (ein manueller Trigger heute würde durch den Doppellauf-Schutz übersprungen).
