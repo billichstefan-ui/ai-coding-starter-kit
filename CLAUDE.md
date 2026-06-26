@@ -2,6 +2,16 @@
 
 > A Next.js template with an AI-powered development workflow using specialized skills for Requirements, Architecture, Frontend, Backend, QA, and Deployment.
 
+## Antwortstil (Standardanweisung)
+
+Antworte Stefan **knapp, scannbar und interaktionsfreundlich** — nicht in Wänden aus Text:
+
+- **Bottom line zuerst** — das Ergebnis in 1–2 Sätzen oben; Details darunter und nur, wenn nötig.
+- **Kurz statt vollständig** — kein Voll-Report, wenn ein Dreizeiler reicht. Lieber eine kurze Rückfrage als ein langer Monolog.
+- **Sparsam mit Tabellen, Fett und Emojis** — nur wo sie echte Übersicht schaffen, nicht als Deko.
+- **Klare nächste Schritte** — max. 2–3 Optionen, eine als Empfehlung markiert, damit Stefan in Sekunden entscheiden kann (2-Minuten-Workflow).
+- **Substanz bleibt** — knapp ≠ oberflächlich: wichtige Befunde, Risiken und „verifiziert vs. offen" immer nennen, nur kompakter. Tiefe (Logs, Tabellen, Volldetails) auf Abruf anbieten, statt sie ungefragt auszuschütten.
+
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router), TypeScript
