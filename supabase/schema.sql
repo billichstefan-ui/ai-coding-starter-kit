@@ -291,3 +291,42 @@ INSERT INTO modules (key, label, status, sort_order) VALUES
   ('analytics', 'Executive Analytics', 'slot',  90),
   ('copilot',   'Copilot',             'slot', 100)
 ON CONFLICT (key) DO NOTHING;
+
+-- ============================================================
+-- COMPANY OS — Projects (Portfolio; additive, idempotent)
+-- Web-Quelle für die CEO-Home ProjectHeatmap. Die Notion-KORDIX-OS
+-- Projekte-DB bleibt die menschliche Steuerzentrale.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS projects (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id        UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  name          TEXT NOT NULL,
+  status        TEXT NOT NULL DEFAULT 'idea',
+  priority      TEXT CHECK (priority IN ('P0','P1','P2')),
+  progress      INT NOT NULL DEFAULT 0 CHECK (progress BETWEEN 0 AND 100),
+  rev_potential INT, effort INT, scalability INT, synergy INT,
+  next_step     TEXT,
+  sort_order    INT NOT NULL DEFAULT 0,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (org_id, name)
+);
+
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Eingeloggte Nutzer können Projekte lesen" ON projects;
+CREATE POLICY "Eingeloggte Nutzer können Projekte lesen"
+  ON projects FOR SELECT USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Eingeloggte Nutzer können Projekte schreiben" ON projects;
+CREATE POLICY "Eingeloggte Nutzer können Projekte schreiben"
+  ON projects FOR ALL USING (auth.uid() IS NOT NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_projects_sort ON projects(sort_order);
+
+-- Seed: aktuelles Kordix-Portfolio (idempotent über (org_id, name))
+INSERT INTO projects (org_id, name, status, priority, progress, rev_potential, effort, scalability, synergy, next_step, sort_order) VALUES
+  ('00000000-0000-0000-0000-000000000001', 'QualiPilot',                   'MVP live', 'P0', 70, 5, 4, 5, 5, 'max_tokens-Deploy verifizieren, IQ/OQ sauber generieren', 10),
+  ('00000000-0000-0000-0000-000000000001', 'NORA BizDev-Agent',            'MVP live', 'P1', 85, 3, 2, 4, 5, 'Bestätigte Vorschläge → KORDIX-Backlog-Sync', 20),
+  ('00000000-0000-0000-0000-000000000001', 'Kordix Company OS',            'MVP live', 'P1', 30, 2, 3, 5, 5, 'Phase 2 — erstes echtes Live-Modul (AI Agents / Finance)', 30),
+  ('00000000-0000-0000-0000-000000000001', 'GMP Validation Kit',           'Idee',     'P0', 10, 4, 2, 5, 5, 'PDF/Kit aus Vorlagen schnüren', 40),
+  ('00000000-0000-0000-0000-000000000001', 'Kordix AI (Marke & Beratung)', 'Aufbau',   'P1', 40, 4, 3, 3, 4, 'Angebots-/Positionierungs-Seite', 50),
+  ('00000000-0000-0000-0000-000000000001', 'Content Factory',              'Bei Null', 'P1', 25, 3, 3, 5, 4, 'EP01 veröffentlichen, Pipeline etablieren', 60)
+ON CONFLICT (org_id, name) DO NOTHING;
