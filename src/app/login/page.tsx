@@ -28,7 +28,7 @@ export default function LoginPage() {
       }
 
       if (data.session) {
-        window.location.href = '/dashboard'
+        window.location.href = '/'
       }
     } catch {
       setError('Verbindungsfehler. Bitte versuche es erneut.')
