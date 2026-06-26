@@ -6,6 +6,7 @@ import { KpiCard } from '@/components/os/KpiCard'
 import { BriefingCard } from '@/components/os/BriefingCard'
 import { ProjectHeatmap } from '@/components/os/ProjectHeatmap'
 import { ActivityStream, type ActivityItem } from '@/components/os/ActivityStream'
+import { getProjects } from '@/lib/projects'
 import { ApprovalsIsland } from './approvals-island'
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -48,7 +49,7 @@ export default async function CeoHome() {
 
   // Alle unabhängigen Reads parallel. Defensiv: page rendert auch, wenn
   // einzelne Queries leer/fehlerhaft sind.
-  const [listResult, kpis, implResult, reportResult] = await Promise.all([
+  const [listResult, kpis, implResult, reportResult, projects] = await Promise.all([
     supabase
       .from('suggestions')
       .select('id, title, body, insight, source, category, status, report_date')
@@ -67,6 +68,7 @@ export default async function CeoHome() {
       .select('report_date, suggestions_count, generation_status, created_at')
       .order('report_date', { ascending: false })
       .limit(10),
+    getProjects(),
   ])
 
   const pending = (listResult.data ?? []) as Suggestion[]
@@ -194,7 +196,7 @@ export default async function CeoHome() {
           >
             Projekte
           </h2>
-          <ProjectHeatmap projects={[]} />
+          <ProjectHeatmap projects={projects} />
         </div>
         <div className="space-y-3">
           <h2
