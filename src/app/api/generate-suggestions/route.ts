@@ -1,13 +1,58 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase-server'
-import { generateSuggestions, generateProductOpportunity } from '@/lib/anthropic'
+import {
+  generateSuggestions,
+  generateProductOpportunity,
+  usageCostUsd,
+  type TokenUsage,
+} from '@/lib/anthropic'
 import { fetchLiveContext } from '@/lib/live-context'
+import { KORDIX_ORG_ID } from '@/lib/metrics'
 
 // Generierung kann mehrere Sekunden dauern (Claude + Retries + Notion-Fetches).
 export const maxDuration = 60
 
 function todayUTC(): string {
   return new Date().toISOString().slice(0, 10)
+}
+
+type DbClient = ReturnType<typeof createServiceRoleClient>
+
+/**
+ * Schreibt einen NORA-Lauf in `agent_runs` (Phase-2-Telemetrie: Status, Tokens,
+ * Kosten). Strikt best-effort: jeder Fehler wird verschluckt — die Telemetrie
+ * darf den Tageslauf NIE beeinflussen oder zum Werfen bringen.
+ */
+async function recordAgentRun(
+  db: DbClient,
+  run: {
+    status: 'succeeded' | 'failed'
+    trigger: string
+    startedAt: string
+    usage: TokenUsage
+    summary?: string | null
+    error?: string | null
+  }
+): Promise<void> {
+  try {
+    await db.from('agent_runs').insert([
+      {
+        org_id: KORDIX_ORG_ID,
+        agent_key: 'nora',
+        started_at: run.startedAt,
+        finished_at: new Date().toISOString(),
+        status: run.status,
+        trigger: run.trigger,
+        input_tokens: run.usage.input_tokens,
+        output_tokens: run.usage.output_tokens,
+        cost_usd: usageCostUsd(run.usage),
+        summary: run.summary ?? null,
+        error: run.error ?? null,
+      },
+    ])
+  } catch {
+    // best-effort: agent_runs-Tabelle evtl. noch nicht migriert o. Ä. — ignorieren.
+  }
 }
 
 /**
@@ -49,6 +94,9 @@ async function handleGenerate(request: NextRequest) {
   }
 
   const today = todayUTC()
+  const startedAt = new Date().toISOString()
+  const trigger = request.method === 'POST' ? 'manual' : 'cron'
+  const usage: TokenUsage = { input_tokens: 0, output_tokens: 0 }
 
   // 1. Doppellauf-Schutz: existiert heute schon ein erfolgreicher Report?
   const { data: existingReport } = await db
@@ -66,7 +114,7 @@ async function handleGenerate(request: NextRequest) {
 
   // 3. Generierung (Claude + Retry-Logik in generateSuggestions).
   try {
-    const suggestions = await generateSuggestions(liveContext)
+    const suggestions = await generateSuggestions(liveContext, usage)
 
     // 4a. Kern-Vorschläge speichern.
     const rows = suggestions.map(s => ({
@@ -89,7 +137,7 @@ async function handleGenerate(request: NextRequest) {
     // noch nicht angewendet wurde), bleibt der bereits gespeicherte Kern-Batch
     // unberührt — die 4. Kategorie darf den Tageslauf nie mitreißen.
     let opportunityCount = 0
-    const productOpportunity = await generateProductOpportunity(liveContext)
+    const productOpportunity = await generateProductOpportunity(liveContext, usage)
     if (productOpportunity) {
       const { error: oppError } = await db.from('suggestions').insert([
         {
@@ -117,6 +165,15 @@ async function handleGenerate(request: NextRequest) {
       { onConflict: 'report_date' }
     )
 
+    // 5. Phase-2-Telemetrie: erfolgreichen NORA-Lauf protokollieren (best-effort).
+    await recordAgentRun(db, {
+      status: 'succeeded',
+      trigger,
+      startedAt,
+      usage,
+      summary: `${rows.length} Vorschläge${opportunityCount ? ' + 1 Produkt-Chance' : ''}`,
+    })
+
     return NextResponse.json({ success: true, count: totalCount })
   } catch (error) {
     // 4b. Endgültiger Fehler: kein halber Report, Status "failed" protokollieren.
@@ -130,6 +187,16 @@ async function handleGenerate(request: NextRequest) {
     )
 
     const message = error instanceof Error ? error.message : 'Unbekannter Fehler.'
+
+    // 5. Phase-2-Telemetrie: fehlgeschlagenen NORA-Lauf protokollieren (best-effort).
+    await recordAgentRun(db, {
+      status: 'failed',
+      trigger,
+      startedAt,
+      usage,
+      error: message,
+    })
+
     return NextResponse.json(
       { error: 'Generierung fehlgeschlagen.', detail: message },
       { status: 500 }

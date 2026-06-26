@@ -12,6 +12,37 @@ const MAX_RETRIES = 3
 const MIN_SUGGESTIONS = 3
 const MAX_SUGGESTIONS = 5
 
+// ─── Token-Nutzung & Kosten (für die AI-Agents Control Center / Phase 2) ─────
+// Optionaler Akkumulator: wird vom Aufrufer (route.ts) durch die Generierungs-
+// Funktionen gereicht, um Input-/Output-Tokens eines Laufs zu summieren.
+export type TokenUsage = { input_tokens: number; output_tokens: number }
+
+// Opus-4.8-Tarif in USD pro 1 Mio. Tokens (Stand 2026-06).
+export const OPUS_USD_PER_MTOK = { input: 5, output: 25 } as const
+
+/** USD-Kosten eines Laufs aus seiner Token-Nutzung (Opus-4.8-Tarif). */
+export function usageCostUsd(u: TokenUsage): number {
+  return (
+    (u.input_tokens / 1_000_000) * OPUS_USD_PER_MTOK.input +
+    (u.output_tokens / 1_000_000) * OPUS_USD_PER_MTOK.output
+  )
+}
+
+/**
+ * Addiert die Token-Nutzung einer erfolgreichen Antwort auf den Akkumulator.
+ * Defensiv: ohne Akkumulator oder ohne `usage` im Response passiert nichts —
+ * Tests (gemockter parse ohne usage) und der Tageslauf bleiben unberührt.
+ */
+function accumulateUsage(
+  usage: TokenUsage | undefined,
+  response: { usage?: { input_tokens?: number; output_tokens?: number } | null }
+): void {
+  if (usage && response.usage) {
+    usage.input_tokens += response.usage.input_tokens ?? 0
+    usage.output_tokens += response.usage.output_tokens ?? 0
+  }
+}
+
 export const CATEGORIES = ['marketing', 'product', 'operations', 'design'] as const
 export type Category = (typeof CATEGORIES)[number]
 
@@ -231,7 +262,8 @@ export async function elaborateDocument(params: {
  * MAX_RETRIES Mal mit kurzer, wachsender Pause. Wirft, wenn alle Versuche scheitern.
  */
 export async function generateSuggestions(
-  liveContext: LiveContext
+  liveContext: LiveContext,
+  usage?: TokenUsage
 ): Promise<GeneratedSuggestion[]> {
   const client = getClient()
   const prompt = buildPrompt(liveContext)
@@ -254,6 +286,9 @@ export async function generateSuggestions(
       if (!parsed || parsed.suggestions.length === 0) {
         throw new Error('Claude lieferte keine verwertbaren Vorschläge.')
       }
+
+      // Tokens des erfolgreichen Versuchs erfassen (best-effort, für Phase-2-Telemetrie).
+      accumulateUsage(usage, response)
 
       // Auf den gültigen Bereich begrenzen (Schema kann Anzahl nicht erzwingen).
       return parsed.suggestions.slice(0, MAX_SUGGESTIONS)
@@ -332,7 +367,8 @@ Sprache: Deutsch. Sei konkret und spezifisch — kein generisches Geschwätz.`
  * zurückgegeben (kein Wurf) — der tägliche Hauptlauf darf dadurch NIE blockiert werden.
  */
 export async function generateProductOpportunity(
-  liveContext: LiveContext
+  liveContext: LiveContext,
+  usage?: TokenUsage
 ): Promise<GeneratedSuggestion | null> {
   // Best-effort: ohne Wissensbasis keine Produkt-Chance.
   if (!DIGITAL_PRODUCT_RESEARCH.trim()) return null
@@ -367,6 +403,9 @@ export async function generateProductOpportunity(
       if (!p || !p.title) {
         throw new Error('Claude lieferte keine verwertbare Produkt-Chance.')
       }
+
+      // Tokens des erfolgreichen Versuchs erfassen (best-effort, für Phase-2-Telemetrie).
+      accumulateUsage(usage, response)
 
       // Klartext-Labels (kein Markdown): die Dashboard-Card rendert den body als
       // reinen Text mit whitespace-pre-line — Zeilenumbrüche bleiben, ** würde
