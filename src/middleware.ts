@@ -23,7 +23,15 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const isLoginPage = request.nextUrl.pathname === '/login'
+  const path = request.nextUrl.pathname
+  const isQualiPilot = path.startsWith('/qualipilot')
+
+  // Öffentliche Seiten: Company-OS-Login + QualiPilots eigener Login/Registrierung.
+  const publicPaths = ['/login', '/qualipilot/login', '/qualipilot/register']
+  const isPublic = publicPaths.includes(path)
+
+  // Ziel-Login je nach Produkt.
+  const loginTarget = isQualiPilot ? '/qualipilot/login' : '/login'
 
   let user = null
   try {
@@ -31,24 +39,31 @@ export async function middleware(request: NextRequest) {
     user = data.user
   } catch {
     // Supabase nicht erreichbar — kein White Screen erzwingen.
-    // Auf der Login-Seite normal weitermachen; geschützte Seiten zur Login-Seite leiten.
-    if (!isLoginPage) {
+    // Öffentliche Seiten normal weitermachen; geschützte Seiten zum Login leiten.
+    if (!isPublic) {
       const url = request.nextUrl.clone()
-      url.pathname = '/login'
+      url.pathname = loginTarget
       return NextResponse.redirect(url)
     }
     return supabaseResponse
   }
 
-  if (!user && !isLoginPage) {
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = loginTarget
     return NextResponse.redirect(url)
   }
 
-  if (user && isLoginPage) {
+  // Eingeloggte Nutzer von der Login-Seite wegleiten (Registrierung bleibt für
+  // das QualiPilot-Onboarding erreichbar).
+  if (user && path === '/login') {
     const url = request.nextUrl.clone()
     url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+  if (user && path === '/qualipilot/login') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/qualipilot/dashboard'
     return NextResponse.redirect(url)
   }
 

@@ -25,7 +25,8 @@
 | PROJ-8 | Notion-Dokument-Ausarbeitung | Deployed | [Spec](PROJ-8-notion-document-elaboration.md) | 2026-06-07 |
 | PROJ-9 | Digital Product Research (Demand Validation) | Deployed | [Spec](PROJ-9-digital-product-research.md) | 2026-06-17 |
 | PROJ-10 | Design & Brand (Vorschlags-Kategorie) | In Progress | [Spec](PROJ-10-design-brand-suggestions.md) | 2026-06-16 |
+| PROJ-11 | QualiPilot MVP (Local AI GMP Platform) | In Progress | [Spec](PROJ-11-qualipilot-mvp-local-ai.md) | 2026-07-05 |
 
 <!-- Add features above this line -->
 
-## Next Available ID: PROJ-11
+## Next Available ID: PROJ-12
