@@ -1,0 +1,769 @@
+1
+00:00:00,000 --> 00:00:02,340
+You saw the message get read.
+
+2
+00:00:02,400 --> 00:00:03,995
+Three dots appeared.
+
+3
+00:00:04,055 --> 00:00:05,071
+Then nothing.
+
+4
+00:00:05,131 --> 00:00:09,374
+And something in your chest tightened,
+over silence.
+
+5
+00:00:09,434 --> 00:00:13,097
+You told yourself it was stupid to feel
+that.
+
+6
+00:00:13,157 --> 00:00:14,504
+It's just a text.
+
+7
+00:00:14,564 --> 00:00:16,242
+It's just one person.
+
+8
+00:00:16,302 --> 00:00:17,566
+You're an adult.
+
+9
+00:00:17,626 --> 00:00:21,290
+But the feeling didn't care what you told
+it.
+
+10
+00:00:21,350 --> 00:00:25,593
+It sat there, low and dull, for the rest
+of the day.
+
+11
+00:00:25,653 --> 00:00:28,489
+Here's what I want you to consider.
+
+12
+00:00:28,549 --> 00:00:30,889
+That feeling wasn't weakness.
+
+13
+00:00:30,949 --> 00:00:33,289
+And it wasn't only emotional.
+
+14
+00:00:33,349 --> 00:00:39,661
+Somewhere underneath it, your brain was
+running an alarm it uses for physical
+
+15
+00:00:39,721 --> 00:00:40,321
+injury.
+
+16
+00:00:40,300 --> 00:00:43,779
+We treat being ignored as a small thing.
+
+17
+00:00:43,839 --> 00:00:45,194
+A social scrape.
+
+18
+00:00:45,254 --> 00:00:49,707
+Something you should be able to shake off
+by lunch.
+
+19
+00:00:49,767 --> 00:00:57,050
+But if you've ever been left out of a
+group, talked over in a meeting, or watched a
+
+20
+00:00:57,110 --> 00:01:04,305
+friendship go quiet with no explanation,
+you already know the truth your body kept
+
+21
+00:01:04,365 --> 00:01:05,455
+insisting on.
+
+22
+00:01:05,515 --> 00:01:07,313
+It didn't feel small.
+
+23
+00:01:07,373 --> 00:01:10,940
+And for most of human history, it wasn't.
+
+24
+00:01:11,000 --> 00:01:13,001
+Start with the strange part.
+
+25
+00:01:13,061 --> 00:01:15,578
+Why does being ignored hurt at all?
+
+26
+00:01:15,638 --> 00:01:18,007
+A cruel word, you can understand.
+
+27
+00:01:18,067 --> 00:01:18,890
+But silence?
+
+28
+00:01:18,950 --> 00:01:19,550
+Absence?
+
+29
+00:01:19,539 --> 00:01:20,730
+Nothing was said.
+
+30
+00:01:20,790 --> 00:01:21,982
+Nothing was done.
+
+31
+00:01:22,042 --> 00:01:28,018
+And yet there's a specific, physical ache
+to being left out that a paper cut can't
+
+32
+00:01:28,078 --> 00:01:28,901
+quite match.
+
+33
+00:01:28,961 --> 00:01:33,391
+For a long time, we assumed that was just
+a figure of speech.
+
+34
+00:01:33,451 --> 00:01:34,422
+Hurt feelings.
+
+35
+00:01:34,482 --> 00:01:35,526
+A broken heart.
+
+36
+00:01:35,586 --> 00:01:36,998
+Poetry, not biology.
+
+37
+00:01:37,058 --> 00:01:42,740
+Then researchers put people inside a brain
+scanner and started to play a game.
+
+38
+00:01:42,800 --> 00:01:45,135
+The setup was almost childishly simple.
+
+39
+00:01:45,195 --> 00:01:50,294
+A participant lies in a brain scanner and
+plays a video game, just tossing a virtual
+
+40
+00:01:50,354 --> 00:01:52,935
+ball back and forth with two other
+players.
+
+41
+00:01:52,995 --> 00:01:54,777
+At first, everyone's included.
+
+42
+00:01:54,837 --> 00:01:56,129
+The ball comes around.
+
+43
+00:01:56,189 --> 00:01:56,988
+It feels fine.
+
+44
+00:01:57,048 --> 00:02:00,612
+Then, quietly, the other two players stop
+throwing to them.
+
+45
+00:02:00,672 --> 00:02:01,272
+No insult.
+
+46
+00:02:01,286 --> 00:02:02,147
+No explanation.
+
+47
+00:02:02,207 --> 00:02:03,806
+The ball just stops coming.
+
+48
+00:02:03,866 --> 00:02:07,490
+The person is left to watch two strangers
+play without them.
+
+49
+00:02:07,550 --> 00:02:09,640
+And in the scans, something lit up.
+
+50
+00:02:09,700 --> 00:02:14,113
+A region called the dorsal anterior
+cingulate cortex, hold onto that, it matters,
+
+51
+00:02:14,173 --> 00:02:14,886
+became active.
+
+52
+00:02:14,946 --> 00:02:18,585
+It's one of the areas that processes the
+distress of physical pain.
+
+53
+00:02:18,645 --> 00:02:21,622
+The part that makes pain feel bad, not
+just detectable.
+
+54
+00:02:21,682 --> 00:02:24,880
+The more excluded someone felt, the more
+that region fired.
+
+55
+00:02:24,940 --> 00:02:26,260
+Sit with how odd this is.
+
+56
+00:02:26,320 --> 00:02:27,254
+There was no pain.
+
+57
+00:02:27,314 --> 00:02:28,138
+No touch at all.
+
+58
+00:02:28,198 --> 00:02:32,776
+A cartoon ball stopped moving on a screen,
+and the brain answered with the machinery
+
+59
+00:02:32,836 --> 00:02:33,436
+of injury.
+
+60
+00:02:33,388 --> 00:02:34,488
+And it gets stranger.
+
+61
+00:02:34,548 --> 00:02:38,740
+This still happens when people are told
+the other players are just a computer
+
+62
+00:02:38,800 --> 00:02:39,400
+program.
+
+63
+00:02:39,241 --> 00:02:42,936
+It still happens when they're excluded for
+a reason that helps them.
+
+64
+00:02:42,996 --> 00:02:45,310
+The alarm doesn't wait for your
+permission.
+
+65
+00:02:45,370 --> 00:02:46,801
+It doesn't check the facts.
+
+66
+00:02:46,861 --> 00:02:47,740
+It just goes off.
+
+67
+00:02:47,800 --> 00:02:49,366
+Which raises the real question.
+
+68
+00:02:49,426 --> 00:02:51,255
+Why would a brain be built this way?
+
+69
+00:02:51,315 --> 00:02:55,400
+To answer that, stop picturing a phone,
+and picture a person a hundred thousand
+
+70
+00:02:55,460 --> 00:02:56,060
+years ago.
+
+71
+00:02:55,985 --> 00:02:58,443
+Back then, you did not survive as an
+individual.
+
+72
+00:02:58,503 --> 00:03:00,332
+You survived as a member of a group.
+
+73
+00:03:00,392 --> 00:03:04,686
+The group had the food, the warmth, the
+shared watch against everything in the dark
+
+74
+00:03:04,746 --> 00:03:05,893
+that wanted to eat you.
+
+75
+00:03:05,953 --> 00:03:08,464
+To be excluded from that group was not an
+insult.
+
+76
+00:03:08,524 --> 00:03:09,985
+It was a slow death sentence.
+
+77
+00:03:10,045 --> 00:03:13,133
+So the brain did something efficient, and
+a little ruthless.
+
+78
+00:03:13,193 --> 00:03:16,333
+It didn't build a brand-new warning system
+for social danger.
+
+79
+00:03:16,393 --> 00:03:20,478
+It borrowed the one that already worked,
+the one that screams when your body is
+
+80
+00:03:20,538 --> 00:03:21,213
+being damaged.
+
+81
+00:03:21,273 --> 00:03:23,311
+Rejection got wired into the pain alarm.
+
+82
+00:03:23,371 --> 00:03:26,039
+Because, back then, rejection was a
+physical threat.
+
+83
+00:03:26,099 --> 00:03:30,446
+Being left out and being injured pointed
+at the same outcome: you might not make it.
+
+84
+00:03:30,506 --> 00:03:32,440
+So the brain gave them the same voice.
+
+85
+00:03:32,500 --> 00:03:35,941
+Now bring that ancient wiring into a
+Tuesday afternoon.
+
+86
+00:03:36,001 --> 00:03:38,869
+You send a message and watch it go
+unanswered.
+
+87
+00:03:38,929 --> 00:03:41,542
+You're the only one not added to the plan.
+
+88
+00:03:41,602 --> 00:03:46,443
+You say something in a group and it lands
+in silence, and someone changes the
+
+89
+00:03:46,503 --> 00:03:47,103
+subject.
+
+90
+00:03:47,012 --> 00:03:49,307
+None of this threatens your survival.
+
+91
+00:03:49,367 --> 00:03:50,198
+You know that.
+
+92
+00:03:50,258 --> 00:03:53,317
+You could list all the reasons it doesn't
+matter.
+
+93
+00:03:53,377 --> 00:03:55,226
+And the alarm goes off anyway.
+
+94
+00:03:55,286 --> 00:03:58,918
+Because the system underneath doesn't
+speak your language.
+
+95
+00:03:58,978 --> 00:04:01,464
+It doesn't understand, it's just a text.
+
+96
+00:04:01,524 --> 00:04:04,710
+It only knows one thing: the group is
+pulling away.
+
+97
+00:04:04,770 --> 00:04:09,993
+And to a brain shaped by a hundred
+thousand years of that meaning death, that is an
+
+98
+00:04:10,053 --> 00:04:10,653
+emergency.
+
+99
+00:04:10,689 --> 00:04:13,239
+This is why, just ignore it, never works.
+
+100
+00:04:13,299 --> 00:04:15,403
+You're not failing to be rational.
+
+101
+00:04:15,463 --> 00:04:18,840
+You're being overruled by something older
+than reason.
+
+102
+00:04:18,900 --> 00:04:20,523
+But here's the turn.
+
+103
+00:04:20,583 --> 00:04:24,224
+That alarm, as real as it is, is also
+wrong.
+
+104
+00:04:24,284 --> 00:04:30,534
+It's protecting you from a danger that,
+most of the time, no longer exists.
+
+105
+00:04:30,594 --> 00:04:34,909
+Being left off a text thread will not get
+you eaten.
+
+106
+00:04:34,969 --> 00:04:40,966
+Being talked over in a meeting will not
+leave you to freeze in the dark.
+
+107
+00:04:41,026 --> 00:04:42,649
+The pain is genuine.
+
+108
+00:04:42,709 --> 00:04:46,939
+The threat it's reporting is usually a
+false alarm.
+
+109
+00:04:46,999 --> 00:04:52,744
+You are carrying a smoke detector
+calibrated for a world that's gone.
+
+110
+00:04:52,804 --> 00:04:56,362
+It's still screaming at the smell of
+toast.
+
+111
+00:04:56,422 --> 00:05:02,924
+And once you can see it that way, not as
+proof that you're weak, but as an old
+
+112
+00:05:02,984 --> 00:05:08,140
+system doing its old job a little too
+well, something loosens.
+
+113
+00:05:08,200 --> 00:05:13,384
+If you still doubt that social pain is
+physical pain, there's one more finding, and
+
+114
+00:05:13,444 --> 00:05:14,584
+it's a strange one.
+
+115
+00:05:14,644 --> 00:05:19,512
+Researchers gave people a daily dose of an
+ordinary painkiller, acetaminophen.
+
+116
+00:05:19,572 --> 00:05:22,291
+The kind of thing you'd take for a
+headache.
+
+117
+00:05:22,351 --> 00:05:25,261
+For three weeks, one group took the
+painkiller.
+
+118
+00:05:25,321 --> 00:05:26,903
+Another took a sugar pill.
+
+119
+00:05:26,963 --> 00:05:28,040
+Nobody knew which.
+
+120
+00:05:28,100 --> 00:05:32,273
+The group on the painkiller reported fewer
+hurt feelings over time.
+
+121
+00:05:32,333 --> 00:05:37,454
+And in the scanner, their brains showed a
+quieter response to social rejection, in
+
+122
+00:05:37,514 --> 00:05:38,528
+that same region.
+
+123
+00:05:38,588 --> 00:05:42,002
+A pill for physical pain, reaching into
+emotional pain.
+
+124
+00:05:42,062 --> 00:05:45,603
+Now, this is not medical advice, and it's
+not a solution.
+
+125
+00:05:45,663 --> 00:05:48,446
+You don't treat loneliness with a
+painkiller.
+
+126
+00:05:48,506 --> 00:05:50,531
+But as evidence, it's remarkable.
+
+127
+00:05:50,591 --> 00:05:54,006
+It means the overlap isn't a metaphor or a
+coincidence.
+
+128
+00:05:54,066 --> 00:05:58,934
+The two kinds of pain share enough
+machinery that a drug for one can touch the
+
+129
+00:05:58,994 --> 00:05:59,594
+other.
+
+130
+00:05:59,373 --> 00:06:03,040
+Your brain really doesn't draw the line
+you thought it did.
+
+131
+00:06:03,100 --> 00:06:07,808
+I want to be careful here, because this is
+where a lot of videos overreach.
+
+132
+00:06:07,868 --> 00:06:13,021
+What's well-established: social rejection
+reliably activates brain regions tied to
+
+133
+00:06:13,081 --> 00:06:18,170
+the distressing side of physical pain, and
+it threatens deep needs, to belong, to
+
+134
+00:06:18,230 --> 00:06:19,887
+matter, to feel in control.
+
+135
+00:06:19,947 --> 00:06:25,163
+What's still debated: exactly how specific
+that overlap is, and whether those brain
+
+136
+00:06:25,223 --> 00:06:30,376
+regions are about pain itself, or about
+something broader, like how much something
+
+137
+00:06:30,436 --> 00:06:31,838
+demands your attention.
+
+138
+00:06:31,898 --> 00:06:34,445
+Serious researchers still argue about it.
+
+139
+00:06:34,505 --> 00:06:38,768
+So the honest version isn't, rejection is
+identical to a broken arm.
+
+140
+00:06:38,828 --> 00:06:44,044
+It's this: the border between physical and
+social pain is far, far blurrier than we
+
+141
+00:06:44,104 --> 00:06:48,240
+ever assumed, blurry enough that your body
+was never lying to you.
+
+142
+00:06:48,300 --> 00:06:50,037
+So go back to that moment.
+
+143
+00:06:50,097 --> 00:06:51,212
+The read receipt.
+
+144
+00:06:51,272 --> 00:06:52,249
+The three dots.
+
+145
+00:06:52,309 --> 00:06:53,078
+The silence.
+
+146
+00:06:53,138 --> 00:06:56,949
+The tightening in your chest was not you
+being dramatic.
+
+147
+00:06:57,009 --> 00:07:02,548
+It was a hundred thousand years of
+survival instinct, firing exactly as designed,
+
+148
+00:07:02,608 --> 00:07:08,285
+telling you that connection matters,
+because there was a time it was the only thing
+
+149
+00:07:08,345 --> 00:07:09,667
+that kept you alive.
+
+150
+00:07:09,727 --> 00:07:11,810
+That ache is not a flaw in you.
+
+151
+00:07:11,870 --> 00:07:16,027
+It's the cost of being a creature built to
+need other people.
+
+152
+00:07:16,087 --> 00:07:20,174
+The people who feel this most sharply are
+not the weak ones.
+
+153
+00:07:20,234 --> 00:07:25,842
+They're the ones most finely tuned to
+belonging, and that same tuning is what lets
+
+154
+00:07:25,902 --> 00:07:28,883
+them love, and stay, and show up for
+others.
+
+155
+00:07:28,943 --> 00:07:30,888
+You were never too sensitive.
+
+156
+00:07:30,948 --> 00:07:35,795
+You were paying attention with a very old,
+very loyal part of yourself.
+
+157
+00:07:35,855 --> 00:07:38,353
+Here's the quiet gift in all of this.
+
+158
+00:07:38,413 --> 00:07:40,495
+You can't switch the alarm off.
+
+159
+00:07:40,555 --> 00:07:43,329
+But you can learn to recognize its voice.
+
+160
+00:07:43,389 --> 00:07:48,652
+The next time silence lands harder than it
+should, you'll have a name for it.
+
+161
+00:07:48,712 --> 00:07:50,103
+That's the old alarm.
+
+162
+00:07:50,163 --> 00:07:50,794
+Real pain.
+
+163
+00:07:50,854 --> 00:07:51,900
+Outdated threat.
+
+164
+00:07:51,960 --> 00:07:56,601
+And a feeling you can name is a feeling
+that stops running the room.
+
+165
+00:07:56,661 --> 00:08:02,407
+Once you learn to see these hidden
+patterns, ordinary moments stop looking ordinary.
+
+166
+00:08:02,467 --> 00:08:04,204
+A pause in a conversation.
+
+167
+00:08:04,264 --> 00:08:05,794
+A message left on read.
+
+168
+00:08:05,854 --> 00:08:07,798
+A chair no one saved for you.
+
+169
+00:08:07,858 --> 00:08:13,604
+That's what Hidden Rush is here to
+uncover, the forces moving quietly underneath the
+
+170
+00:08:13,664 --> 00:08:16,715
+things we were told not to take so
+seriously.
+
+171
+00:08:16,775 --> 00:08:17,613
+Stay a while.
+
+172
+00:08:17,673 --> 00:08:20,240
+There's more of this than you'd think.
